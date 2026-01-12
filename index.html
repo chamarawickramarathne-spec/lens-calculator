@@ -29,6 +29,7 @@
                 </svg>
                 Add Equipment
             </button>
+            <p class="header-note">Help us improve our database</p>
         </header>
 
         <!-- Main Content -->
@@ -212,7 +213,7 @@
                 <button class="modal-close" id="close-modal-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <p class="modal-description">Add new equipment to the system (will be inactive until approved)</p>
+                <p class="modal-description">Add new equipment to the system (will be inactive until approved). Please enter the local renting price for the equipment.</p>
                 <div class="add-equipment-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -240,7 +241,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="new-equipment-value" class="form-label">Value (LKR) *</label>
+                            <label for="new-equipment-value" class="form-label">Local Renting Price (LKR) *</label>
                             <input type="number" id="new-equipment-value" class="form-input" min="0" step="0.01" placeholder="0.00" required>
                         </div>
                         <div class="form-group">
@@ -257,6 +258,8 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

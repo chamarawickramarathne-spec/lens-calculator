@@ -17,7 +17,8 @@ $data = json_decode($json, true);
 $required = ['category_id', 'type', 'model', 'name', 'value'];
 foreach ($required as $field) {
     if (!isset($data[$field]) || trim($data[$field]) === '') {
-        echo json_encode(['success' => false, 'message' => "Missing required field: $field"]);
+        $fieldName = ($field === 'value') ? 'local renting price' : $field;
+        echo json_encode(['success' => false, 'message' => "Missing required field: $fieldName"]);
         exit;
     }
 }

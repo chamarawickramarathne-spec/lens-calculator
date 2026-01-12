@@ -251,17 +251,23 @@ function renderEquipmentDropdown(category) {
     quantityGroup.appendChild(quantityLabel);
     quantityGroup.appendChild(quantityInput);
     
-    const addButton = document.createElement('button');
-    addButton.className = 'btn btn-primary btn-small';
-    addButton.textContent = 'Add';
-    addButton.addEventListener('click', () => addEquipmentItem(category.id));
-    
     controls.appendChild(selectGroup);
     controls.appendChild(quantityGroup);
-    controls.appendChild(addButton);
     
     groupDiv.appendChild(controls);
     container.appendChild(groupDiv);
+    
+    // Initialize Select2 for searchable dropdown
+    $(`#equipment-select-${category.id}`).select2({
+        placeholder: '-- Select Equipment --',
+        allowClear: true,
+        width: '100%'
+    });
+    
+    // Add event listener to add item when selection changes
+    $(`#equipment-select-${category.id}`).on('select2:select', function() {
+        addEquipmentItem(category.id);
+    });
 }
 
 // Remove equipment dropdown
@@ -341,7 +347,7 @@ function renderSelectedEquipment() {
         
         const details = document.createElement('div');
         details.className = 'equipment-item-details';
-        details.textContent = `${item.type} - ${item.model} | Qty: ${item.quantity} × ${currency}${parseFloat(item.value).toFixed(2)}`;
+        details.textContent = `${item.type_name || item.type} - ${item.model} | Qty: ${item.quantity} × ${currency}${parseFloat(item.value).toFixed(2)}`;
         
         info.appendChild(name);
         info.appendChild(details);
@@ -529,7 +535,7 @@ function downloadPDF() {
         notes: document.getElementById('package-notes').value.trim(),
         equipment: JSON.stringify(state.selectedEquipment.map(item => ({
             name: item.name,
-            type: item.type,
+            type: item.type_name || item.type,
             model: item.model,
             quantity: item.quantity,
             unit_value: parseFloat(item.value).toFixed(2),
@@ -644,7 +650,7 @@ async function addNewEquipment() {
     }
     
     if (parseFloat(value) < 0) {
-        showToast('Value must be a positive number', 'error');
+        showToast('Local renting price must be a positive number', 'error');
         return;
     }
     

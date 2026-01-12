@@ -13,12 +13,13 @@ if ($result && $result->num_rows > 0) {
         $templateId = $row['id'];
         
         // Get equipment for this template
-        $equipSql = "SELECT te.*, e.name, e.type, e.model, e.value, e.category_id, c.name as category_name
+        $equipSql = "SELECT te.*, e.name, e.type, e.model, e.value, e.category_id, c.name as category_name, et.type as type_name
                      FROM template_equipment te
                      INNER JOIN equipment_details e ON te.equipment_id = e.id
                      INNER JOIN category_types c ON e.category_id = c.id
+                     LEFT JOIN equipment_types et ON e.type = et.id
                      WHERE te.template_id = ?
-                     ORDER BY c.display_order, e.type, e.name";
+                     ORDER BY c.display_order, et.type, e.name";
         
         $stmt = $conn->prepare($equipSql);
         $stmt->bind_param('i', $templateId);

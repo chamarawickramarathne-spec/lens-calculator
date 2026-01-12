@@ -242,7 +242,7 @@ header('Content-Type: text/html; charset=utf-8');
     
     <!-- Header -->
     <div class="header">
-        <div class="title">Lens Calculator</div>
+        <div class="title">Price Calculator</div>
         <div class="subtitle">Hire Artist Studio</div>
     </div>
     
@@ -334,7 +334,7 @@ header('Content-Type: text/html; charset=utf-8');
     <!-- Footer -->
     <div class="footer">
         <p>&copy; <?php echo date('Y'); ?> Hire Artist Studio. All rights reserved.</p>
-        <p>Thank you for choosing Lens Calculator for your photography pricing needs.</p>
+        <p>Thank you for choosing Price Calculator for your photography pricing needs.</p>
     </div>
 </body>
 </html>
