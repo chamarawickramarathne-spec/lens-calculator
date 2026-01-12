@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lens Calculator - Hire Artist Studio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Select2 for searchable dropdowns -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <img src="images/logo.png" alt="Hire Artist Studio Logo" class="app-logo">
+                <div class="header-text">
+                    <h1 class="app-title">Package Price Calculator</h1>
+                    <p class="app-subtitle">Hire Artist Studio</p>
+                </div>
+            </div>
+            <button id="open-add-equipment-btn" class="btn-menu" title="Add New Equipment">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                Add Equipment
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Section 1: Templates -->
+            <section class="section templates-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-number">1</span>
+                        Templates
+                    </h2>
+                    <p class="section-description">Choose a predefined package template to get started quickly</p>
+                </div>
+                <div class="section-content">
+                    <div class="template-selection">
+                        <label for="template-select" class="form-label">Select Package Template</label>
+                        <select id="template-select" class="form-select">
+                            <option value="">-- Custom Package (No Template) --</option>
+                        </select>
+                        <button id="apply-template-btn" class="btn btn-secondary" disabled>Apply Template</button>
+                    </div>
+                    <div id="template-info" class="template-info" style="display: none;">
+                        <h3 class="template-info-title">Template Details</h3>
+                        <p id="template-description" class="template-description"></p>
+                        <div class="template-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Event Hours:</span>
+                                <span id="template-hours" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Hourly Rate:</span>
+                                <span id="template-rate" class="stat-value">$0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Margin:</span>
+                                <span id="template-margin" class="stat-value">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Equipment Selection -->
+            <section class="section equipment-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-number">2</span>
+                        Equipment Selection
+                    </h2>
+                    <p class="section-description">Select equipment categories and add items to your package</p>
+                </div>
+                <div class="section-content">
+                    <div class="category-selection">
+                        <label class="form-label">Select Equipment Categories</label>
+                        <div id="category-checkboxes" class="checkbox-grid">
+                            <!-- Categories will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div id="equipment-dropdowns" class="equipment-dropdowns">
+                        <!-- Dynamic equipment dropdowns will appear here -->
+                    </div>
+
+                    <div class="selected-equipment">
+                        <h3 class="subsection-title">Selected Equipment</h3>
+                        <div id="selected-equipment-list" class="equipment-list">
+                            <p class="empty-state">No equipment selected yet</p>
+                        </div>
+                        <div class="equipment-total">
+                            <span class="total-label">Equipment Total:</span>
+                            <span id="equipment-total" class="total-value">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Basic Pricing & Margins -->
+            <section class="section labor-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-number">3</span>
+                        Basic Pricing & Margins
+                    </h2>
+                    <p class="section-description">Calculate Photographer costs and profit margins</p>
+                </div>
+                <div class="section-content">
+                    <div class="labor-inputs">
+                        <div class="form-group">
+                            <label for="labor-hours" class="form-label">Event Hours</label>
+                            <input type="number" id="labor-hours" class="form-input" min="0" step="0.5" value="2" placeholder="0.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="hourly-rate" class="form-label">Hourly Rate ($)</label>
+                            <input type="number" id="hourly-rate" class="form-input" min="0" step="1" value="1000" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="margin-percentage" class="form-label">Profit Margin (%)</label>
+                            <input type="number" id="margin-percentage" class="form-input" min="0" max="100" step="1" value="10" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="labor-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Photographer Cost:</span>
+                            <span id="labor-total" class="summary-value">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Package Price -->
+            <section class="section price-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-number">4</span>
+                        Package Price
+                    </h2>
+                    <p class="section-description">Final package pricing breakdown</p>
+                </div>
+                <div class="section-content">
+                    <div class="price-breakdown">
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Equipment Total:</span>
+                            <span id="breakdown-equipment" class="breakdown-value">$0.00</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Photographer Cost:</span>
+                            <span id="breakdown-labor" class="breakdown-value">$0.00</span>
+                        </div>
+                        <div class="breakdown-item subtotal-item">
+                            <span class="breakdown-label">Subtotal:</span>
+                            <span id="breakdown-subtotal" class="breakdown-value">$0.00</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Profit Margin (<span id="margin-display">0</span>%):</span>
+                            <span id="breakdown-margin" class="breakdown-value">$0.00</span>
+                        </div>
+                        <div class="breakdown-item total-item">
+                            <span class="breakdown-label">Final Total:</span>
+                            <span id="breakdown-total" class="breakdown-value">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="package-actions">
+                        <div class="form-group">
+                            <label for="package-name" class="form-label">Package Name</label>
+                            <input type="text" id="package-name" class="form-input" placeholder="e.g., Birthday Shoot - John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="client-name" class="form-label">Client Name (Optional)</label>
+                            <input type="text" id="client-name" class="form-input" placeholder="Client name">
+                        </div>
+                        <div class="form-group">
+                            <label for="package-notes" class="form-label">Notes (Optional)</label>
+                            <textarea id="package-notes" class="form-textarea" rows="3" placeholder="Additional notes or requirements..."></textarea>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="download-pdf-btn" class="btn btn-success">Download Price Breakdown</button>
+                            <button id="download-package-pdf-btn" class="btn btn-success">Download Package Details</button>
+                            <button id="reset-btn" class="btn btn-outline">Reset All</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2025 Hire Artist Studio. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"><span id="toast-message"></span></div>
+
+    <!-- Add Equipment Modal -->
+    <div id="add-equipment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Equipment</h2>
+                <button class="modal-close" id="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Add new equipment to the system (will be inactive until approved)</p>
+                <div class="add-equipment-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="new-equipment-category" class="form-label">Category *</label>
+                            <select id="new-equipment-category" class="form-select" required>
+                                <option value="">-- Select Category --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-equipment-type" class="form-label">Type *</label>
+                            <select id="new-equipment-type" class="form-select" required>
+                                <option value="">-- Select Type --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="new-equipment-model" class="form-label">Model *</label>
+                            <input type="text" id="new-equipment-model" class="form-input" placeholder="e.g., Canon, Sony, Sigma" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-equipment-name" class="form-label">Name *</label>
+                            <input type="text" id="new-equipment-name" class="form-input" placeholder="e.g., Canon EOS R5 Body" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="new-equipment-value" class="form-label">Value (LKR) *</label>
+                            <input type="number" id="new-equipment-value" class="form-input" min="0" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-equipment-description" class="form-label">Description (Optional)</label>
+                            <input type="text" id="new-equipment-description" class="form-input" placeholder="Additional details...">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button id="add-equipment-btn" class="btn btn-primary">Add Equipment</button>
+                        <button id="clear-equipment-form-btn" class="btn btn-outline">Clear Form</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

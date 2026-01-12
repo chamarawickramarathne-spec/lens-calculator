@@ -1,0 +1,258 @@
+/*
+ * Lens Calculator - Configuration Notes
+ * 
+ * This file contains helpful information about customizing
+ * and configuring the Lens Calculator application.
+ */
+
+// ============================================
+// DATABASE CONFIGURATION
+// ============================================
+
+/*
+ * Default Configuration (for XAMPP/WAMP):
+ * 
+ * Host: localhost
+ * Username: root
+ * Password: (empty)
+ * Database: lens_calculator
+ * 
+ * To change these, edit: api/config.php
+ */
+
+// ============================================
+// EQUIPMENT CATEGORIES
+// ============================================
+
+/*
+ * Default Categories (ID | Name):
+ * 
+ * 1  | Camera Body
+ * 2  | Lenses
+ * 3  | Lighting
+ * 4  | Audio
+ * 5  | Stabilization
+ * 6  | Accessories
+ * 7  | Backdrops
+ * 8  | Props
+ * 
+ * Add more in phpMyAdmin → category_types table
+ */
+
+// ============================================
+// PRICING RECOMMENDATIONS
+// ============================================
+
+/*
+ * Equipment Daily Rates:
+ * - Entry Level Camera: $30-$50
+ * - Professional Camera: $50-$80
+ * - Prime Lenses: $15-$30
+ * - Zoom Lenses: $30-$50
+ * - Studio Strobes: $30-$50
+ * - LED Panels: $25-$40
+ * - Gimbals: $30-$40
+ * 
+ * Labor Rates by Experience:
+ * - Beginner: $30-$50/hour
+ * - Intermediate: $50-$75/hour
+ * - Professional: $75-$150/hour
+ * - Expert: $150-$300/hour
+ * 
+ * Profit Margins:
+ * - Minimum: 20%
+ * - Standard: 25-30%
+ * - Premium: 35-50%
+ */
+
+// ============================================
+// INCLUDED TEMPLATES
+// ============================================
+
+/*
+ * 1. Birthday Shoot - Basic
+ *    - 1 Camera body
+ *    - 2 Lenses
+ *    - Basic lighting
+ *    - 3 hours @ $50/hr
+ *    - 25% margin
+ * 
+ * 2. Wedding Shoot - Professional
+ *    - 2 Camera bodies
+ *    - 4 Lenses
+ *    - Advanced gear
+ *    - 8 hours @ $75/hr
+ *    - 30% margin
+ * 
+ * 3. Portrait Studio - Standard
+ *    - 1 Camera
+ *    - 2 Lenses
+ *    - Studio lighting
+ *    - Backdrops
+ *    - 2 hours @ $60/hr
+ *    - 25% margin
+ * 
+ * 4. Product Photography - Basic
+ *    - 1 Camera
+ *    - Macro lens
+ *    - LED lighting
+ *    - 2.5 hours @ $55/hr
+ *    - 25% margin
+ * 
+ * 5. Event Coverage - Standard
+ *    - 1 Camera
+ *    - 3 Lenses
+ *    - Speedlights
+ *    - 4 hours @ $65/hr
+ *    - 25% margin
+ */
+
+// ============================================
+// CUSTOMIZATION TIPS
+// ============================================
+
+/*
+ * Colors (in css/style.css):
+ * --primary-color: #2563eb (Blue)
+ * --secondary-color: #10b981 (Green)
+ * 
+ * Change company name:
+ * - Update "Hire Artist Studio" in index.html
+ * - Update in api/generate_pdf.php
+ * - Update in README.md
+ * 
+ * Add your logo:
+ * - Create an img/ folder
+ * - Add logo image
+ * - Update header in index.html
+ * - Update PDF header in generate_pdf.php
+ */
+
+// ============================================
+// API ENDPOINTS
+// ============================================
+
+/*
+ * GET /api/get_categories.php
+ * - Returns all equipment categories
+ * 
+ * GET /api/get_equipment.php?category_id=X
+ * - Returns equipment for specific category
+ * - Omit category_id for all equipment
+ * 
+ * GET /api/get_templates.php
+ * - Returns all package templates with equipment
+ * 
+ * POST /api/save_package.php
+ * - Saves a package to database
+ * - Requires JSON body with package details
+ * 
+ * GET /api/generate_pdf.php?[params]
+ * - Generates PDF quotation
+ * - Opens in new window for printing
+ */
+
+// ============================================
+// DATABASE TABLES OVERVIEW
+// ============================================
+
+/*
+ * category_types
+ * - id, name, description, display_order, is_active
+ * 
+ * equipment_details
+ * - id, category_id, type, model, name, value, description
+ * 
+ * templates
+ * - id, name, description, labor_hours, hourly_rate, margin_percentage
+ * 
+ * template_equipment
+ * - id, template_id, equipment_id, quantity
+ * 
+ * packages (saved quotations)
+ * - id, package_name, client_name, all pricing fields, notes
+ * 
+ * package_equipment
+ * - id, package_id, equipment_id, quantity, unit_value, total_value
+ */
+
+// ============================================
+// BACKUP RECOMMENDATIONS
+// ============================================
+
+/*
+ * Regular Backups:
+ * 
+ * 1. Database:
+ *    - Export from phpMyAdmin monthly
+ *    - Save as: lens_calculator_YYYY_MM_DD.sql
+ * 
+ * 2. Files:
+ *    - Backup entire lens-calculator folder
+ *    - Include any customizations
+ * 
+ * 3. Important Data:
+ *    - Equipment pricing (changes over time)
+ *    - Templates (custom configurations)
+ *    - Saved packages (client quotations)
+ */
+
+// ============================================
+// SECURITY NOTES
+// ============================================
+
+/*
+ * For Production Use:
+ * 
+ * 1. Change database password from default
+ * 2. Use prepared statements (already implemented)
+ * 3. Add user authentication if needed
+ * 4. Enable HTTPS
+ * 5. Restrict API access
+ * 6. Validate all inputs
+ * 7. Regular security updates
+ */
+
+// ============================================
+// SUPPORT & RESOURCES
+// ============================================
+
+/*
+ * Documentation:
+ * - README.md - Full documentation
+ * - SETUP.md - Quick setup guide
+ * 
+ * Database:
+ * - phpMyAdmin: http://localhost/phpmyadmin
+ * - Database name: lens_calculator
+ * 
+ * Application:
+ * - URL: http://localhost/lens-calculator/
+ * 
+ * File Structure:
+ * - Frontend: index.html, css/, js/
+ * - Backend: api/
+ * - Database: database/
+ */
+
+// ============================================
+// VERSION INFORMATION
+// ============================================
+
+/*
+ * Lens Calculator v1.0
+ * Released: November 10, 2025
+ * 
+ * Built with:
+ * - HTML5, CSS3, JavaScript ES6
+ * - PHP 7.4+
+ * - MySQL 5.7+
+ * 
+ * Features:
+ * ✓ Template system
+ * ✓ Dynamic equipment selection
+ * ✓ Real-time calculations
+ * ✓ Package saving
+ * ✓ PDF generation
+ * ✓ Responsive design
+ */

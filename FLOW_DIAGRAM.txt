@@ -1,0 +1,240 @@
+===========================================
+LENS CALCULATOR - APPLICATION FLOW DIAGRAM
+===========================================
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                         USER OPENS APPLICATION                       │
+│                     http://localhost/lens-calculator/                │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                          INDEX.HTML LOADS                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Header: "Lens Calculator" - "Hire Artist Studio"           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                         APP.JS INITIALIZES                           │
+│  Loads Data from API:                                                │
+│  ├─ GET api/get_categories.php    → [8 Categories]                 │
+│  ├─ GET api/get_equipment.php     → [50+ Equipment Items]          │
+│  └─ GET api/get_templates.php     → [5 Templates]                  │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      SECTION 1: TEMPLATES                            │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │  Template Dropdown:                                         │    │
+│  │  ├─ Birthday Shoot - Basic                                 │    │
+│  │  ├─ Wedding Shoot - Professional                           │    │
+│  │  ├─ Portrait Studio - Standard                             │    │
+│  │  ├─ Product Photography - Basic                            │    │
+│  │  └─ Event Coverage - Standard                              │    │
+│  │                                                             │    │
+│  │  [Apply Template Button]                                   │    │
+│  └────────────────────────────────────────────────────────────┘    │
+│                                                                       │
+│  If template selected:                                               │
+│  └─► Auto-populate equipment, labor hours, rate, margin            │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                   SECTION 2: EQUIPMENT SELECTION                     │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │  Select Categories:                                         │    │
+│  │  ☐ Camera Body    ☐ Lenses       ☐ Lighting              │    │
+│  │  ☐ Audio          ☐ Stabilization ☐ Accessories          │    │
+│  │  ☐ Backdrops      ☐ Props                                 │    │
+│  └────────────────────────────────────────────────────────────┘    │
+│                                                                       │
+│  When category checked:                                              │
+│  └─► Show dropdown with equipment for that category                 │
+│       ├─ Equipment Select Dropdown                                  │
+│       ├─ Quantity Input                                             │
+│       └─ [Add Button]                                               │
+│                                                                       │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │  Selected Equipment List:                                   │    │
+│  │  ├─ Canon 5D Mark IV (x1) ................ $50.00         │    │
+│  │  ├─ 24-70mm Lens (x1) ..................... $35.00        │    │
+│  │  ├─ Studio Strobe (x2) .................... $80.00        │    │
+│  │  └─ [Remove buttons]                                       │    │
+│  │                                                             │    │
+│  │  Equipment Total: $165.00                                  │    │
+│  └────────────────────────────────────────────────────────────┘    │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                   SECTION 3: LABOR & MARGINS                         │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │  Labor Hours:    [3.0]                                     │    │
+│  │  Hourly Rate:    [$50.00]                                  │    │
+│  │  Profit Margin:  [25]%                                     │    │
+│  │                                                             │    │
+│  │  Labor Cost: $150.00                                       │    │
+│  └────────────────────────────────────────────────────────────┘    │
+│                                                                       │
+│  Real-time calculation on input change                              │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    SECTION 4: PACKAGE PRICE                          │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │  PRICE BREAKDOWN                                            │    │
+│  │  ────────────────────────────────────────                  │    │
+│  │  Equipment Total:           $165.00                        │    │
+│  │  Labor Cost:                $150.00                        │    │
+│  │  ───────────────────────────────────                       │    │
+│  │  Subtotal:                  $315.00                        │    │
+│  │  Profit Margin (25%):        $78.75                        │    │
+│  │  ═══════════════════════════════════                       │    │
+│  │  FINAL TOTAL:               $393.75                        │    │
+│  └────────────────────────────────────────────────────────────┘    │
+│                                                                       │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │  Package Name:    [Birthday Shoot - John Doe]             │    │
+│  │  Client Name:     [John Doe]                              │    │
+│  │  Notes:           [Special decorations needed...]          │    │
+│  └────────────────────────────────────────────────────────────┘    │
+│                                                                       │
+│  [Save Package]  [Download PDF]  [Reset All]                       │
+└─────────────────────┬──────────────────┬────────────────────────────┘
+                      │                  │
+           ┌──────────▼────────┐    ┌────▼──────────┐
+           │  Save Package     │    │  Download PDF  │
+           │  POST to API      │    │  GET with      │
+           │  ↓                │    │  parameters    │
+           │  Database stored  │    │  ↓             │
+           │  Success toast    │    │  PDF opens     │
+           └───────────────────┘    │  Print dialog  │
+                                    └────────────────┘
+
+===========================================
+DATABASE STRUCTURE
+===========================================
+
+category_types ────┐
+                   │
+                   ├─── equipment_details ─────┐
+                   │                            │
+templates ─────────┴─── template_equipment ◄───┘
+   │
+   │
+   ├─── packages ────────── package_equipment ◄─── equipment_details
+   │
+   └─► Saved customer quotations
+
+===========================================
+API FLOW
+===========================================
+
+Frontend (JavaScript)          Backend (PHP)           Database (MySQL)
+─────────────────────          ──────────────          ────────────────
+
+Load Categories
+    │
+    ├─► GET categories ──────► Query DB ─────────► SELECT * FROM 
+    │                                               category_types
+    ◄─── JSON Response ◄────── Format Result ◄────
+    │
+
+Load Equipment
+    │
+    ├─► GET equipment ───────► Query DB ─────────► SELECT * FROM 
+    │                                               equipment_details
+    ◄─── JSON Response ◄────── Format Result ◄────
+    │
+
+Load Templates
+    │
+    ├─► GET templates ───────► Query DB ─────────► SELECT * FROM 
+    │                          with JOINs           templates + equipment
+    ◄─── JSON Response ◄────── Format Result ◄────
+    │
+
+Save Package
+    │
+    ├─► POST package ────────► Begin Transaction ► INSERT packages
+    │   (JSON body)            │                    INSERT package_equipment
+    │                          └─► Commit
+    ◄─── Success/Error ◄────── Return ID ◄─────────
+    │
+
+Generate PDF
+    │
+    └─► GET with params ─────► Build HTML ────────► (No DB needed)
+        │                       Return PDF
+        └─► Open in window
+
+===========================================
+USER WORKFLOW EXAMPLES
+===========================================
+
+EXAMPLE 1: Using Template (Quick Setup)
+────────────────────────────────────────
+1. Select "Birthday Shoot - Basic" from dropdown
+2. Click "Apply Template"
+3. ✓ Categories auto-checked
+4. ✓ Equipment auto-added
+5. ✓ Labor values filled
+6. ✓ Margin set
+7. Review totals ($287.50)
+8. Enter package name
+9. Click "Download PDF"
+10. PDF opens with quote
+
+EXAMPLE 2: Custom Package (Manual Setup)
+─────────────────────────────────────────
+1. Check "Camera Body" category
+2. Select "Canon 5D Mark IV" → Add
+3. Check "Lenses" category
+4. Select "24-70mm Lens" → Add
+5. Select "85mm Portrait Lens" → Add
+6. Check "Lighting" category
+7. Select "Studio Strobe", Qty: 2 → Add
+8. Enter labor: 4 hours @ $65/hr
+9. Set margin: 30%
+10. Review breakdown
+11. Save package to database
+12. Download PDF for client
+
+EXAMPLE 3: Modify Template
+───────────────────────────
+1. Apply "Wedding Shoot" template
+2. Remove one camera body
+3. Add extra speedlight
+4. Adjust hours: 10 instead of 8
+5. Increase rate: $85/hr
+6. Review new total
+7. Save and export
+
+===========================================
+CALCULATION LOGIC
+===========================================
+
+Equipment Total = Σ(Equipment Value × Quantity)
+                  
+Labor Total = Labor Hours × Hourly Rate
+
+Subtotal = Equipment Total + Labor Total
+
+Margin Amount = Subtotal × (Margin % ÷ 100)
+
+FINAL TOTAL = Subtotal + Margin Amount
+
+Example:
+────────
+Equipment: $165.00
+Labor: 3hrs × $50 = $150.00
+Subtotal: $315.00
+Margin: $315.00 × 0.25 = $78.75
+FINAL: $393.75
+
+===========================================
