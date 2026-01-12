@@ -875,11 +875,17 @@ body {
 }
 
 /* Menu Button */
-.btn-menu {
+.header-actions {
     position: absolute;
     top: 50%;
     right: 2rem;
     transform: translateY(-50%);
+    display: flex;
+    gap: 0.75rem;
+    z-index: 2;
+}
+
+.btn-menu {
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.4);
@@ -889,7 +895,6 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 2;
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
@@ -899,12 +904,12 @@ body {
 .btn-menu:hover {
     background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
-    transform: translateY(-50%) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .btn-menu:active {
-    transform: translateY(-50%) scale(0.98);
+    transform: scale(0.98);
 }
 
 .btn-menu svg {
@@ -1023,6 +1028,44 @@ body {
     font-size: 0.95rem;
 }
 
+/* User Guide Styles */
+.user-guide-content {
+    color: var(--dark);
+}
+
+.user-guide-content > p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.guide-step {
+    background: var(--accent-lighter);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.guide-step:hover {
+    background: var(--accent-light);
+    transform: translateX(5px);
+    box-shadow: var(--shadow-md);
+}
+
+.guide-step h3 {
+    color: var(--accent-red);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.guide-step p {
+    color: var(--dark-light);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
 /* Responsive adjustments for modal */
 @media (max-width: 768px) {
     .modal-content {
@@ -1038,14 +1081,24 @@ body {
         padding: 1.5rem;
     }
     
-    .btn-menu {
+    .header-actions {
         right: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-menu {
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
     }
     
     .btn-menu span {
         display: none;
+    }
+    
+    .header-note {
+        right: 1rem;
+        top: calc(50% + 60px);
     }
 }
 

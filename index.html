@@ -23,12 +23,20 @@
                     <p class="app-subtitle">Hire Artist Studio</p>
                 </div>
             </div>
-            <button id="open-add-equipment-btn" class="btn-menu" title="Add New Equipment">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12h14"/>
-                </svg>
-                Add Equipment
-            </button>
+            <div class="header-actions">
+                <button id="open-user-guide-btn" class="btn-menu" title="User Guide">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                    <span>User Guide</span>
+                </button>
+                <button id="open-add-equipment-btn" class="btn-menu" title="Add New Equipment">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    <span>Add Equipment</span>
+                </button>
+            </div>
             <p class="header-note">Help us improve our database</p>
         </header>
 
@@ -204,6 +212,46 @@
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"><span id="toast-message"></span></div>
+
+    <!-- User Guide Modal -->
+    <div id="user-guide-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">පරිශීලක අත්පොත (User Guide)</h2>
+                <button class="modal-close" id="close-guide-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="user-guide-content">
+                    <p><strong>මෙම ඇප් එක භාවිතා කරන ආකාරය පියවරෙන් පියවර මෙන්න:</strong></p>
+                    
+                    <div class="guide-step">
+                        <h3>පියවර 01: Template එකක් තෝරා ගැනීම (Choose a Template)</h3>
+                        <p>ඔබට 'Birthday Shoot', 'Wedding Shoot' වැනි කලින් සකස් කළ පැකේජ වර්ගයක් තෝරාගත හැක. නැතහොත් 'Custom Package' තෝරා මුල සිටම ඔබේ පැකේජය නිර්මාණය කළ හැක.</p>
+                    </div>
+
+                    <div class="guide-step">
+                        <h3>පියවර 02: උපකරණ එකතු කිරීම (Equipment Selection)</h3>
+                        <p>ඔබ භාවිතා කරන කැමරා (Camera Body), ලෙන්ස් (Lenses), ලයිට් (Lighting) සහ අනෙකුත් උපකරණ තෝරාගන්න. මෙහිදී එක් එක් උපකරණයේ වටිනාකම අනුව ස්වයංක්‍රීයව පිරිවැය ගණනය වේ.</p>
+                    </div>
+
+                    <div class="guide-step">
+                        <h3>පියවර 03: ශිල්පියාගේ ගාස්තුව (Photographer Cost)</h3>
+                        <p>ඔබ වැඩ කරන පැය ගණන (Event Hours) සහ පැයකට ඔබ අය කරන මුදල (Hourly Rate) ඇතුළත් කරන්න.</p>
+                    </div>
+
+                    <div class="guide-step">
+                        <h3>පියවර 04: ලාභාංශ එකතු කිරීම (Profit Margin)</h3>
+                        <p>ඔබේ නඩත්තු වියදම් සහ ශුද්ධ ලාභය සඳහා අවශ්‍ය ප්‍රතිශතය (%) මෙහි ඇතුළත් කරන්න.</p>
+                    </div>
+
+                    <div class="guide-step">
+                        <h3>පියවර 05: අවසාන මිල සහ වාර්තාව (Final Price & Download)</h3>
+                        <p>සියලු විස්තර ඇතුළත් කළ පසු ඇප් එක මගින් අවසාන මිල පෙන්වනු ඇත. ඔබට මෙම සම්පූර්ණ විස්තරය (Price Breakdown) PDF එකක් ලෙස ඩවුන්ලෝඩ් කර පාරිභෝගිකයාට ලබා දිය හැක.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Add Equipment Modal -->
     <div id="add-equipment-modal" class="modal">

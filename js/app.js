@@ -732,6 +732,14 @@ function attachEventListeners() {
     document.getElementById('apply-template-btn').addEventListener('click', applyTemplate);
     
     // Modal controls
+    document.getElementById('open-user-guide-btn').addEventListener('click', openUserGuideModal);
+    document.getElementById('close-guide-modal-btn').addEventListener('click', closeUserGuideModal);
+    document.getElementById('user-guide-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeUserGuideModal();
+        }
+    });
+    
     document.getElementById('open-add-equipment-btn').addEventListener('click', openAddEquipmentModal);
     document.getElementById('close-modal-btn').addEventListener('click', closeAddEquipmentModal);
     document.getElementById('add-equipment-modal').addEventListener('click', function(e) {
@@ -753,6 +761,20 @@ function attachEventListeners() {
     document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
     document.getElementById('download-package-pdf-btn').addEventListener('click', downloadPackagePDF);
     document.getElementById('reset-btn').addEventListener('click', () => resetAll(true));
+}
+
+// Open User Guide Modal
+function openUserGuideModal() {
+    const modal = document.getElementById('user-guide-modal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close User Guide Modal
+function closeUserGuideModal() {
+    const modal = document.getElementById('user-guide-modal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
 }
 
 // Open Add Equipment Modal
