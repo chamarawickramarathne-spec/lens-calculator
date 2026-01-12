@@ -71,10 +71,13 @@ body {
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1.5rem;
     position: relative;
     z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .app-logo {
@@ -882,16 +885,16 @@ body {
     transform: translateY(-50%);
     display: flex;
     gap: 0.75rem;
-    z-index: 2;
+    z-index: 10;
 }
 
 .btn-menu {
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.4);
-    padding: 0.7rem 1.5rem;
+    padding: 0.7rem 1.2rem;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -899,6 +902,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .btn-menu:hover {
@@ -918,12 +922,12 @@ body {
 
 .header-note {
     position: absolute;
-    top: calc(50% + 25px);
+    bottom: 0.5rem;
     right: 2rem;
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.85);
     font-style: italic;
-    z-index: 2;
+    z-index: 10;
     margin: 0;
 }
 
@@ -1081,6 +1085,18 @@ body {
         padding: 1.5rem;
     }
     
+    .header-content {
+        padding: 0 1rem;
+    }
+    
+    .app-title {
+        font-size: 1.8rem;
+    }
+    
+    .app-subtitle {
+        font-size: 0.9rem;
+    }
+    
     .header-actions {
         right: 1rem;
         flex-direction: column;
@@ -1088,8 +1104,8 @@ body {
     }
     
     .btn-menu {
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
     }
     
     .btn-menu span {
@@ -1098,7 +1114,8 @@ body {
     
     .header-note {
         right: 1rem;
-        top: calc(50% + 60px);
+        bottom: 0.3rem;
+        font-size: 0.65rem;
     }
 }
 
