@@ -17,11 +17,40 @@ function getCurrency() {
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
+    // Log page access
+    logPageAccess();
+    
     initializeApp();
     attachEventListeners();
     // Calculate totals with default values
     calculateTotals();
 });
+
+// Log page access to the server
+async function logPageAccess() {
+    try {
+        const response = await fetch('api/log_access.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                console.log('Page access logged successfully:', data.log_id);
+            } else {
+                console.error('Failed to log access:', data.error);
+            }
+        } else {
+            console.error('Failed to log access: HTTP', response.status);
+        }
+    } catch (error) {
+        // Silently fail - don't interrupt user experience
+        console.error('Failed to log page access:', error);
+    }
+}
 
 // Initialize application
 async function initializeApp() {
