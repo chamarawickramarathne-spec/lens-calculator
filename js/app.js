@@ -1,4 +1,8 @@
-// Global state
+/**
+ * Lens Calculator - Assistant Logic
+ * Author: Antigravity
+ */
+
 const state = {
     categories: [],
     equipment: [],
@@ -7,816 +11,376 @@ const state = {
     selectedEquipment: [],
     selectedCategories: new Set(),
     currentTemplate: null,
-    currency: 'LKR '
+    currency: 'LKR ',
+    currentStep: 1
 };
 
-// Get currency symbol
-function getCurrency() {
-    return 'LKR ';
-}
-
-// Initialize app
 document.addEventListener('DOMContentLoaded', () => {
-    // Log page access
-    logPageAccess();
-    
     initializeApp();
     attachEventListeners();
-    // Calculate totals with default values
+    goToStep(1);
     calculateTotals();
 });
 
-// Log page access to the server
-async function logPageAccess() {
-    try {
-        const response = await fetch('api/log_access.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            if (data.success) {
-                console.log('Page access logged successfully:', data.log_id);
-            } else {
-                console.error('Failed to log access:', data.error);
-            }
-        } else {
-            console.error('Failed to log access: HTTP', response.status);
-        }
-    } catch (error) {
-        // Silently fail - don't interrupt user experience
-        console.error('Failed to log page access:', error);
-    }
-}
-
-// Initialize application
 async function initializeApp() {
     try {
-        await Promise.all([
-            loadCategories(),
-            loadEquipment(),
-            loadTemplates(),
-            loadEquipmentTypes()
+        const [cats, equip, temps, types] = await Promise.all([
+            fetch('api/get_categories.php').then(r => r.json()),
+            fetch('api/get_equipment.php').then(r => r.json()),
+            fetch('api/get_templates.php').then(r => r.json()),
+            fetch('api/get_equipment_types.php').then(r => r.json())
         ]);
-    } catch (error) {
-        showToast('Error loading data: ' + error.message, 'error');
-    }
-}
 
-// Load categories from API
-async function loadCategories() {
-    try {
-        const response = await fetch('api/get_categories.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            state.categories = data.data;
+        if (cats.success) {
+            state.categories = cats.data;
             renderCategoryCheckboxes();
+            populateModalCategories();
         }
-    } catch (error) {
-        console.error('Error loading categories:', error);
-        throw error;
+        if (equip.success) state.equipment = equip.data;
+        if (temps.success) renderTemplateDropdown(temps.data);
+        if (types.success) {
+            state.equipmentTypes = types.data;
+            populateModalTypes();
+        }
+
+    } catch (e) {
+        showToast('System initialization failed.', 'error');
     }
 }
 
-// Load equipment from API
-async function loadEquipment() {
-    try {
-        const response = await fetch('api/get_equipment.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            state.equipment = data.data;
-        }
-    } catch (error) {
-        console.error('Error loading equipment:', error);
-        throw error;
-    }
-}
-
-// Load templates from API
-async function loadTemplates() {
-    try {
-        const response = await fetch('api/get_templates.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            state.templates = data.data;
-            renderTemplateDropdown();
-        }
-    } catch (error) {
-        console.error('Error loading templates:', error);
-        throw error;
-    }
-}
-
-// Load equipment types from API
-async function loadEquipmentTypes() {
-    try {
-        const response = await fetch('api/get_equipment_types.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            state.equipmentTypes = data.data;
-            populateEquipmentTypeDropdown();
-        }
-    } catch (error) {
-        console.error('Error loading equipment types:', error);
-        throw error;
-    }
-}
-
-// Render category checkboxes
 function renderCategoryCheckboxes() {
     const container = document.getElementById('category-checkboxes');
+    if (!container) return;
     container.innerHTML = '';
-    
-    state.categories.forEach(category => {
-        const div = document.createElement('div');
+    state.categories.forEach(cat => {
+        const div = document.createElement('label');
         div.className = 'category-checkbox';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `category-${category.id}`;
-        checkbox.value = category.id;
-        checkbox.addEventListener('change', (e) => handleCategoryChange(e, category));
-        
-        const label = document.createElement('label');
-        label.htmlFor = `category-${category.id}`;
-        label.textContent = category.name;
-        
-        div.appendChild(checkbox);
-        div.appendChild(label);
+        div.innerHTML = `
+            <input type="checkbox" value="${cat.id}" id="cat-${cat.id}">
+            <span>${cat.name}</span>
+        `;
+        const cb = div.querySelector('input');
+        cb.addEventListener('change', () => handleCategoryToggle(cat, cb.checked));
         container.appendChild(div);
     });
-    
-    // Also populate the equipment category dropdown
-    populateEquipmentCategoryDropdown();
 }
 
-// Populate type dropdown for new equipment
-function populateEquipmentTypeDropdown() {
-    const select = document.getElementById('new-equipment-type');
-    select.innerHTML = '<option value="">-- Select Type --</option>';
-    
-    state.equipmentTypes.forEach(type => {
-        const option = document.createElement('option');
-        option.value = type.id;
-        option.textContent = type.type;
-        select.appendChild(option);
-    });
-}
-
-// Render template dropdown
-function renderTemplateDropdown() {
-    const select = document.getElementById('template-select');
-    
-    // Clear existing options except first
-    while (select.options.length > 1) {
-        select.remove(1);
-    }
-    
-    state.templates.forEach(template => {
-        const option = document.createElement('option');
-        option.value = template.id;
-        option.textContent = template.name;
-        select.appendChild(option);
-    });
-}
-
-// Handle category checkbox change
-function handleCategoryChange(event, category) {
-    const isChecked = event.target.checked;
-    
+function handleCategoryToggle(cat, isChecked) {
     if (isChecked) {
-        state.selectedCategories.add(category.id);
-        renderEquipmentDropdown(category);
+        state.selectedCategories.add(cat.id);
+        renderEquipmentDropdown(cat);
     } else {
-        state.selectedCategories.delete(category.id);
-        removeEquipmentDropdown(category.id);
-        // Remove equipment items from this category
-        state.selectedEquipment = state.selectedEquipment.filter(
-            item => item.category_id !== category.id
-        );
-        renderSelectedEquipment();
+        state.selectedCategories.delete(cat.id);
+        document.getElementById(`dropdown-group-${cat.id}`)?.remove();
+        state.selectedEquipment = state.selectedEquipment.filter(e => e.category_id != cat.id);
+        renderSelectedItems();
         calculateTotals();
     }
 }
 
-// Render equipment dropdown for a category
-function renderEquipmentDropdown(category) {
-    const container = document.getElementById('equipment-dropdowns');
-    
-    // Check if dropdown already exists
-    if (document.getElementById(`dropdown-${category.id}`)) {
-        return;
-    }
-    
-    const groupDiv = document.createElement('div');
-    groupDiv.className = 'equipment-dropdown-group';
-    groupDiv.id = `dropdown-${category.id}`;
-    
-    const header = document.createElement('div');
-    header.className = 'equipment-dropdown-header';
-    
-    const title = document.createElement('h3');
-    title.className = 'equipment-dropdown-title';
-    title.textContent = category.name;
-    
-    header.appendChild(title);
-    groupDiv.appendChild(header);
-    
-    const controls = document.createElement('div');
-    controls.className = 'equipment-dropdown-controls';
-    
-    const selectGroup = document.createElement('div');
-    selectGroup.className = 'form-group';
-    selectGroup.style.marginBottom = '0';
-    
-    const selectLabel = document.createElement('label');
-    selectLabel.className = 'form-label';
-    selectLabel.textContent = 'Select Equipment';
-    
-    const select = document.createElement('select');
-    select.className = 'form-select';
-    select.id = `equipment-select-${category.id}`;
-    
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Select Equipment --';
-    select.appendChild(defaultOption);
-    
-    // Get equipment for this category
-    const categoryEquipment = state.equipment.filter(eq => eq.category_id === category.id);
-    const currency = getCurrency();
-    categoryEquipment.forEach(equipment => {
-        const option = document.createElement('option');
-        option.value = equipment.id;
-        option.textContent = `${equipment.name} - ${currency}${parseFloat(equipment.value).toFixed(2)}`;
-        option.dataset.equipment = JSON.stringify(equipment);
-        select.appendChild(option);
+function renderEquipmentDropdown(cat) {
+    const mainContainer = document.getElementById('equipment-dropdowns');
+    if (!mainContainer) return;
+    const div = document.createElement('div');
+    div.className = 'form-group dropdown-group';
+    div.id = `dropdown-group-${cat.id}`;
+    div.innerHTML = `
+        <label class="form-label">${cat.name}</label>
+        <select class="form-select equipment-select" id="select-${cat.id}">
+            <option value="">-- Choose ${cat.name} --</option>
+        </select>
+    `;
+    mainContainer.appendChild(div);
+
+    const select = div.querySelector('select');
+    const items = state.equipment.filter(e => e.category_id == cat.id);
+    items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = `${item.name} (${state.currency}${parseFloat(item.value).toFixed(0)})`;
+        opt.dataset.item = JSON.stringify(item);
+        select.appendChild(opt);
     });
-    
-    selectGroup.appendChild(selectLabel);
-    selectGroup.appendChild(select);
-    
-    const quantityGroup = document.createElement('div');
-    quantityGroup.className = 'quantity-group';
-    
-    const quantityLabel = document.createElement('label');
-    quantityLabel.className = 'form-label';
-    quantityLabel.textContent = 'Qty';
-    
-    const quantityInput = document.createElement('input');
-    quantityInput.type = 'number';
-    quantityInput.className = 'form-input';
-    quantityInput.id = `quantity-${category.id}`;
-    quantityInput.min = '1';
-    quantityInput.value = '1';
-    
-    quantityGroup.appendChild(quantityLabel);
-    quantityGroup.appendChild(quantityInput);
-    
-    controls.appendChild(selectGroup);
-    controls.appendChild(quantityGroup);
-    
-    groupDiv.appendChild(controls);
-    container.appendChild(groupDiv);
-    
-    // Initialize Select2 for searchable dropdown
-    $(`#equipment-select-${category.id}`).select2({
-        placeholder: '-- Select Equipment --',
-        allowClear: true,
-        width: '100%'
-    });
-    
-    // Add event listener to add item when selection changes
-    $(`#equipment-select-${category.id}`).on('select2:select', function() {
-        addEquipmentItem(category.id);
+
+    $(select).select2({ width: '100%' });
+    $(select).on('select2:select', (e) => {
+        const item = JSON.parse(e.params.data.element.dataset.item);
+        addGear(item);
+        $(select).val('').trigger('change');
     });
 }
 
-// Remove equipment dropdown
-function removeEquipmentDropdown(categoryId) {
-    const dropdown = document.getElementById(`dropdown-${categoryId}`);
-    if (dropdown) {
-        dropdown.remove();
-    }
-}
-
-// Add equipment item to selection
-function addEquipmentItem(categoryId) {
-    const select = document.getElementById(`equipment-select-${categoryId}`);
-    const quantityInput = document.getElementById(`quantity-${categoryId}`);
-    
-    if (!select.value) {
-        showToast('Please select an equipment item', 'error');
-        return;
-    }
-    
-    const quantity = parseInt(quantityInput.value) || 1;
-    const equipment = JSON.parse(select.options[select.selectedIndex].dataset.equipment);
-    
-    // Check if already added
-    const existingIndex = state.selectedEquipment.findIndex(item => item.id === equipment.id);
-    
-    if (existingIndex >= 0) {
-        // Update quantity
-        state.selectedEquipment[existingIndex].quantity = quantity;
+function addGear(item) {
+    const existing = state.selectedEquipment.find(e => e.id == item.id);
+    if (existing) {
+        existing.quantity++;
     } else {
-        // Add new
-        state.selectedEquipment.push({
-            ...equipment,
-            quantity: quantity
-        });
+        state.selectedEquipment.push({ ...item, quantity: 1 });
     }
-    
-    // Reset select and quantity
-    select.value = '';
-    quantityInput.value = '1';
-    
-    renderSelectedEquipment();
+    renderSelectedItems();
     calculateTotals();
-    showToast('Equipment added successfully', 'success');
+    showToast(`${item.name} added.`);
 }
 
-// Remove equipment item
-function removeEquipmentItem(equipmentId) {
-    state.selectedEquipment = state.selectedEquipment.filter(item => item.id !== equipmentId);
-    renderSelectedEquipment();
-    calculateTotals();
-    showToast('Equipment removed', 'success');
-}
-
-// Render selected equipment list
-function renderSelectedEquipment() {
-    const container = document.getElementById('selected-equipment-list');
-    
+function renderSelectedItems() {
+    const list = document.getElementById('selected-equipment-list');
+    if (!list) return;
+    list.innerHTML = '';
     if (state.selectedEquipment.length === 0) {
-        container.innerHTML = '<p class="empty-state">No equipment selected yet</p>';
+        list.innerHTML = '<p class="empty-state">No gear selected</p>';
         return;
     }
-    
-    container.innerHTML = '';
-    const currency = getCurrency();
-    
+
     state.selectedEquipment.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'equipment-item';
-        
-        const info = document.createElement('div');
-        info.className = 'equipment-item-info';
-        
-        const name = document.createElement('div');
-        name.className = 'equipment-item-name';
-        name.textContent = item.name;
-        
-        const details = document.createElement('div');
-        details.className = 'equipment-item-details';
-        details.textContent = `${item.type_name || item.type} - ${item.model} | Qty: ${item.quantity} × ${currency}${parseFloat(item.value).toFixed(2)}`;
-        
-        info.appendChild(name);
-        info.appendChild(details);
-        
-        const priceDiv = document.createElement('div');
-        priceDiv.className = 'equipment-item-price';
-        
-        const value = document.createElement('span');
-        value.className = 'equipment-item-value';
-        const totalValue = parseFloat(item.value) * item.quantity;
-        value.textContent = `${currency}${totalValue.toFixed(2)}`;
-        
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'btn btn-danger btn-small';
-        removeBtn.textContent = 'Remove';
-        removeBtn.addEventListener('click', () => removeEquipmentItem(item.id));
-        
-        priceDiv.appendChild(value);
-        priceDiv.appendChild(removeBtn);
-        
-        div.appendChild(info);
-        div.appendChild(priceDiv);
-        container.appendChild(div);
+        div.className = 'equipment-item-row';
+        div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background:#f9fafb; margin-bottom:0.5rem; border-radius:8px; font-size:0.875rem;';
+        div.innerHTML = `
+            <div>
+                <strong>${item.name}</strong><br>
+                <small>${item.quantity} x ${state.currency}${parseFloat(item.value).toLocaleString()}</small>
+            </div>
+            <button class="btn-remove" style="color:#ef4444; border:1px solid #fee2e2; background:white; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="removeGear(${item.id})">Remove</button>
+        `;
+        list.appendChild(div);
     });
 }
 
-// Calculate totals
+window.removeGear = (id) => {
+    state.selectedEquipment = state.selectedEquipment.filter(e => e.id != id);
+    renderSelectedItems();
+    calculateTotals();
+};
+
 function calculateTotals() {
-    // Equipment total
-    const equipmentTotal = state.selectedEquipment.reduce((sum, item) => {
-        return sum + (parseFloat(item.value) * item.quantity);
-    }, 0);
+    const gearTotal = state.selectedEquipment.reduce((sum, item) => sum + (parseFloat(item.value) * item.quantity), 0);
+    const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
+    const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
+    const laborTotal = hours * rate;
+    const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
+
+    const subtotal = gearTotal + laborTotal;
+    const profit = subtotal * (margin / 100);
+    const finalTotal = subtotal + profit;
+
+    const gearEl = document.getElementById('equipment-total');
+    if (gearEl) gearEl.textContent = `${state.currency}${gearTotal.toLocaleString()}`;
     
-    // Labor total
-    const laborHours = parseFloat(document.getElementById('labor-hours').value) || 0;
-    const hourlyRate = parseFloat(document.getElementById('hourly-rate').value) || 0;
-    const laborTotal = laborHours * hourlyRate;
-    
-    // Subtotal
-    const subtotal = equipmentTotal + laborTotal;
-    
-    // Margin
-    const marginPercentage = parseFloat(document.getElementById('margin-percentage').value) || 0;
-    const marginAmount = subtotal * (marginPercentage / 100);
-    
-    // Final total
-    const finalTotal = subtotal + marginAmount;
-    
-    // Update UI with currency
-    const currency = getCurrency();
-    document.getElementById('equipment-total').textContent = `${currency}${equipmentTotal.toFixed(2)}`;
-    document.getElementById('labor-total').textContent = `${currency}${laborTotal.toFixed(2)}`;
-    
-    document.getElementById('breakdown-equipment').textContent = `${currency}${equipmentTotal.toFixed(2)}`;
-    document.getElementById('breakdown-labor').textContent = `${currency}${laborTotal.toFixed(2)}`;
-    document.getElementById('breakdown-subtotal').textContent = `${currency}${subtotal.toFixed(2)}`;
-    document.getElementById('breakdown-margin').textContent = `${currency}${marginAmount.toFixed(2)}`;
-    document.getElementById('breakdown-total').textContent = `${currency}${finalTotal.toFixed(2)}`;
-    document.getElementById('margin-display').textContent = marginPercentage.toFixed(0);
+    document.getElementById('sticky-total').textContent = `${state.currency}${finalTotal.toLocaleString()}`;
+
+    renderBreakdown(gearTotal, laborTotal, margin, profit, finalTotal);
 }
 
-// Handle template selection
-function handleTemplateSelection() {
-    const select = document.getElementById('template-select');
-    const applyBtn = document.getElementById('apply-template-btn');
-    const infoDiv = document.getElementById('template-info');
-    
-    if (select.value) {
-        applyBtn.disabled = false;
-        const template = state.templates.find(t => t.id == select.value);
-        
-        if (template) {
-            state.currentTemplate = template;
-            const currency = getCurrency();
-            
-            // Show template info
-            document.getElementById('template-description').textContent = template.description || 'No description available';
-            document.getElementById('template-hours').textContent = parseFloat(template.labor_hours).toFixed(1);
-            document.getElementById('template-rate').textContent = `${currency}${parseFloat(template.hourly_rate).toFixed(2)}`;
-            document.getElementById('template-margin').textContent = `${parseFloat(template.margin_percentage).toFixed(0)}%`;
-            
-            infoDiv.style.display = 'block';
-        }
-    } else {
-        applyBtn.disabled = true;
-        infoDiv.style.display = 'none';
-        state.currentTemplate = null;
-    }
+function renderBreakdown(gear, labor, marginPct, profit, total) {
+    const container = document.getElementById('final-breakdown-container');
+    if (!container) return;
+    container.innerHTML = `
+        <div style="padding:1.5rem; background:#f9fafb; border-radius:16px; border:1px solid #eee;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+                <span style="color:#666">Gear Costs:</span>
+                <span style="font-weight:600">${state.currency}${gear.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+                <span style="color:#666">Service Cost:</span>
+                <span style="font-weight:600">${state.currency}${labor.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; color:#10b981; font-weight:600;">
+                <span>Business Margin (${marginPct}%):</span>
+                <span>${state.currency}${profit.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:1rem; padding-top:1rem; border-top:2px solid #ddd; font-weight:800; font-size:1.25rem;">
+                <span>Grand Total:</span>
+                <span style="color:var(--accent-orange)">${state.currency}${total.toLocaleString()}</span>
+            </div>
+        </div>
+    `;
 }
 
-// Apply template
-function applyTemplate() {
-    if (!state.currentTemplate) {
-        showToast('Please select a template first', 'error');
-        return;
-    }
+function goToStep(step) {
+    state.currentStep = step;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const targetSection = document.getElementById(`step-${step}`);
+    if (targetSection) targetSection.classList.add('active');
+
+    document.querySelectorAll('.step-indicator').forEach(ind => {
+        const s = parseInt(ind.dataset.step);
+        ind.classList.remove('active', 'completed');
+        if (s == step) ind.classList.add('active');
+        if (s < step) ind.classList.add('completed');
+    });
+
+    const mobileBtn = document.getElementById('mobile-next-btn');
+    if (mobileBtn) mobileBtn.textContent = step === 4 ? 'Download PDF' : 'Next Step';
     
-    // Save template reference before reset
-    const template = state.currentTemplate;
-    
-    // Reset current selections
-    resetAll(false);
-    
-    // Set labor values
-    document.getElementById('labor-hours').value = parseFloat(template.labor_hours).toFixed(1);
-    document.getElementById('hourly-rate').value = parseFloat(template.hourly_rate).toFixed(2);
-    document.getElementById('margin-percentage').value = parseFloat(template.margin_percentage).toFixed(0);
-    
-    // Get unique categories from template equipment
-    const templateCategories = new Set(template.equipment.map(eq => eq.category_id));
-    
-    // Check category checkboxes and render dropdowns
-    templateCategories.forEach(categoryId => {
-        const checkbox = document.getElementById(`category-${categoryId}`);
-        if (checkbox) {
-            checkbox.checked = true;
-            state.selectedCategories.add(categoryId);
-            const category = state.categories.find(c => c.id == categoryId);
-            if (category) {
-                renderEquipmentDropdown(category);
-            }
-        }
+    window.scrollTo({ top: 30, behavior: 'smooth' });
+}
+
+function attachEventListeners() {
+    // Navigation
+    document.querySelectorAll('.next-step, .prev-step, .btn-next-tab').forEach(b => {
+        b.addEventListener('click', () => {
+            const next = b.dataset.next || b.dataset.prev;
+            if (next) goToStep(parseInt(next));
+        });
     });
     
-    // Wait for dropdowns to be fully rendered before adding equipment
-    setTimeout(() => {
-        // Add equipment items from template
-        template.equipment.forEach(templateEquip => {
-            // Find equipment by ID (use loose equality for type coercion)
-            const equipment = state.equipment.find(eq => eq.id == templateEquip.equipment_id);
-            if (equipment) {
-                state.selectedEquipment.push({
-                    ...equipment,
-                    quantity: parseInt(templateEquip.quantity) || 1
-                });
-            }
-        });
-        
-        renderSelectedEquipment();
-        calculateTotals();
-        showToast('Template applied successfully', 'success');
-    }, 150);
+    document.getElementById('mobile-next-btn')?.addEventListener('click', () => {
+        if (state.currentStep < 4) goToStep(state.currentStep + 1);
+        else downloadPDF();
+    });
+
+    // Step indicators click
+    document.querySelectorAll('.step-indicator').forEach(ind => {
+        ind.addEventListener('click', () => goToStep(parseInt(ind.dataset.step)));
+    });
+
+    // Inputs
+    ['labor-hours', 'hourly-rate', 'margin-percentage'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', calculateTotals);
+    });
+
+    // Modals
+    document.getElementById('open-user-guide-btn')?.addEventListener('click', () => document.getElementById('user-guide-modal').classList.add('show'));
+    document.getElementById('close-guide-modal-btn')?.addEventListener('click', () => document.getElementById('user-guide-modal').classList.remove('show'));
+    document.getElementById('open-add-new-btn')?.addEventListener('click', () => document.getElementById('add-equipment-modal').classList.add('show'));
+    document.getElementById('close-modal-btn')?.addEventListener('click', () => document.getElementById('add-equipment-modal').classList.remove('show'));
+
+    // Template
+    document.getElementById('template-select')?.addEventListener('change', (e) => {
+        const btn = document.getElementById('apply-template-btn');
+        if (btn) btn.disabled = !e.target.value;
+    });
+    document.getElementById('apply-template-btn')?.addEventListener('click', applyTemplate);
+
+    // Actions
+    document.getElementById('download-pdf-btn')?.addEventListener('click', downloadPDF);
+    document.getElementById('download-package-pdf-btn')?.addEventListener('click', downloadPackagePDF);
+    document.getElementById('reset-btn')?.addEventListener('click', () => window.location.reload());
 }
 
-// Download PDF
+async function applyTemplate() {
+
+    const id = document.getElementById('template-select').value;
+    const res = await fetch(`api/get_templates.php`).then(r => r.json());
+    if (!res.success) return;
+    const temp = res.data.find(t => t.id == id);
+    if (!temp) return;
+
+    state.selectedEquipment = [];
+    temp.equipment.forEach(te => {
+        const item = state.equipment.find(e => e.id == te.equipment_id);
+        if (item) state.selectedEquipment.push({ ...item, quantity: parseInt(te.quantity) });
+    });
+
+    document.getElementById('labor-hours').value = temp.labor_hours;
+    document.getElementById('hourly-rate').value = temp.hourly_rate;
+    document.getElementById('margin-percentage').value = temp.margin_percentage;
+
+    renderSelectedItems();
+    calculateTotals();
+    showToast('Template factors applied.');
+    goToStep(2);
+}
+
+function renderTemplateDropdown(data) {
+    state.templates = data;
+    const sel = document.getElementById('template-select');
+    if (!sel) return;
+    data.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        sel.appendChild(opt);
+    });
+}
+
+function populateModalCategories() {
+    const sel = document.getElementById('new-equipment-category');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Choose Category --</option>';
+    state.categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+    });
+}
+
+function populateModalTypes() {
+    const sel = document.getElementById('new-equipment-type');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Choose Type --</option>';
+    state.equipmentTypes.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.type;
+        sel.appendChild(opt);
+    });
+}
+
+function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    document.getElementById('toast-message').textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
 function downloadPDF() {
-    const packageName = document.getElementById('package-name').value.trim();
-    
-    if (!packageName) {
-        showToast('Please enter a package name first', 'error');
-        return;
-    }
-    
-    if (state.selectedEquipment.length === 0) {
-        showToast('Please add at least one equipment item', 'error');
-        return;
-    }
-    
-    // Calculate values
-    const equipmentTotal = state.selectedEquipment.reduce((sum, item) => {
-        return sum + (parseFloat(item.value) * item.quantity);
-    }, 0);
-    
-    const laborHours = parseFloat(document.getElementById('labor-hours').value) || 0;
-    const hourlyRate = parseFloat(document.getElementById('hourly-rate').value) || 0;
-    const laborTotal = laborHours * hourlyRate;
-    
-    const subtotal = equipmentTotal + laborTotal;
-    const marginPercentage = parseFloat(document.getElementById('margin-percentage').value) || 0;
-    const marginAmount = subtotal * (marginPercentage / 100);
-    const finalTotal = subtotal + marginAmount;
-    
-    // Build query string
+    const gearTotal = state.selectedEquipment.reduce((sum, item) => sum + (parseFloat(item.value) * item.quantity), 0);
+    const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
+    const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
+    const laborTotal = hours * rate;
+    const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
+    const subtotal = gearTotal + laborTotal;
+    const profit = subtotal * (margin / 100);
+    const finalTotal = subtotal + profit;
+
     const params = new URLSearchParams({
-        package_name: packageName,
-        client_name: document.getElementById('client-name').value.trim(),
-        labor_hours: laborHours,
-        hourly_rate: hourlyRate,
-        margin_percentage: marginPercentage,
-        equipment_total: equipmentTotal.toFixed(2),
+        package_name: document.getElementById('package-name').value || 'New Project',
+        client_name: document.getElementById('client-name').value || '',
+        labor_hours: hours,
+        hourly_rate: rate,
+        margin_percentage: margin,
+        equipment_total: gearTotal.toFixed(2),
         labor_total: laborTotal.toFixed(2),
         subtotal: subtotal.toFixed(2),
-        margin_amount: marginAmount.toFixed(2),
+        margin_amount: profit.toFixed(2),
         final_total: finalTotal.toFixed(2),
-        notes: document.getElementById('package-notes').value.trim(),
-        equipment: JSON.stringify(state.selectedEquipment.map(item => ({
-            name: item.name,
-            type: item.type_name || item.type,
-            model: item.model,
-            quantity: item.quantity,
-            unit_value: parseFloat(item.value).toFixed(2),
-            total_value: (parseFloat(item.value) * item.quantity).toFixed(2)
-        }))),
-        currency: getCurrency()
+        currency: state.currency,
+        notes: document.getElementById('package-notes').value || '',
+        equipment: JSON.stringify(state.selectedEquipment.map(e => ({
+
+            name: e.name,
+            model: e.model || '',
+            type: e.type_name || 'Gear',
+            quantity: e.quantity,
+            unit_value: parseFloat(e.value).toFixed(2),
+            total_value: (parseFloat(e.value) * e.quantity).toFixed(2)
+        })))
     });
-    
-    // Open PDF in new window
-    const url = `api/generate_pdf.php?${params.toString()}`;
-    window.open(url, '_blank');
-    showToast('Opening PDF in new window...', 'success');
+    window.open(`api/generate_pdf.php?${params.toString()}`, '_blank');
 }
 
-// Download Package Details PDF
 function downloadPackagePDF() {
-    const packageName = document.getElementById('package-name').value.trim();
-    const clientName = document.getElementById('client-name').value.trim();
-    const notes = document.getElementById('package-notes').value.trim();
-    
-    if (!packageName) {
-        showToast('Please enter a package name first', 'error');
-        return;
-    }
-    
-    // Calculate final total
-    const equipmentTotal = state.selectedEquipment.reduce((sum, item) => {
-        return sum + (parseFloat(item.value) * item.quantity);
-    }, 0);
-    
-    const laborHours = parseFloat(document.getElementById('labor-hours').value) || 0;
-    const hourlyRate = parseFloat(document.getElementById('hourly-rate').value) || 0;
-    const laborTotal = laborHours * hourlyRate;
-    
-    const subtotal = equipmentTotal + laborTotal;
-    const marginPercentage = parseFloat(document.getElementById('margin-percentage').value) || 0;
-    const marginAmount = subtotal * (marginPercentage / 100);
-    const finalTotal = subtotal + marginAmount;
-    
-    // Build query string
+    const gearTotal = state.selectedEquipment.reduce((sum, item) => sum + (parseFloat(item.value) * item.quantity), 0);
+    const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
+    const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
+    const laborTotal = hours * rate;
+    const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
+    const subtotal = gearTotal + laborTotal;
+    const profit = subtotal * (margin / 100);
+    const finalTotal = subtotal + profit;
+
     const params = new URLSearchParams({
-        package_name: packageName,
-        client_name: clientName,
-        notes: notes,
+        package_name: document.getElementById('package-name').value || 'New Project',
+        client_name: document.getElementById('client-name').value || '',
+        notes: document.getElementById('package-notes').value || '',
         final_total: finalTotal.toFixed(2),
-        event_hours: laborHours.toFixed(1),
-        currency: getCurrency()
+        currency: state.currency,
+        event_hours: hours.toFixed(1)
     });
-    
-    // Open PDF in new window
-    const url = `api/generate_package_pdf.php?${params.toString()}`;
-    window.open(url, '_blank');
-    showToast('Opening package details PDF...', 'success');
+    window.open(`api/generate_package_pdf.php?${params.toString()}`, '_blank');
 }
 
-// Reset all
-function resetAll(showMessage = true) {
-    // Uncheck all categories
-    state.selectedCategories.clear();
-    state.categories.forEach(category => {
-        const checkbox = document.getElementById(`category-${category.id}`);
-        if (checkbox) {
-            checkbox.checked = false;
-        }
-    });
-    
-    // Clear equipment dropdowns
-    document.getElementById('equipment-dropdowns').innerHTML = '';
-    
-    // Clear selected equipment
-    state.selectedEquipment = [];
-    renderSelectedEquipment();
-    
-    // Reset template
-    document.getElementById('template-select').value = '';
-    document.getElementById('template-info').style.display = 'none';
-    document.getElementById('apply-template-btn').disabled = true;
-    state.currentTemplate = null;
-    
-    // Reset labor inputs to defaults
-    document.getElementById('labor-hours').value = '2';
-    document.getElementById('hourly-rate').value = '1000';
-    document.getElementById('margin-percentage').value = '10';
-    
-    // Reset package inputs
-    document.getElementById('package-name').value = '';
-    document.getElementById('client-name').value = '';
-    document.getElementById('package-notes').value = '';
-    
-    // Recalculate
-    calculateTotals();
-    
-    if (showMessage) {
-        showToast('All fields have been reset', 'success');
-    }
-}
-
-// Add new equipment
-async function addNewEquipment() {
-    // Get form values
-    const categoryId = document.getElementById('new-equipment-category').value;
-    const typeId = document.getElementById('new-equipment-type').value;
-    const model = document.getElementById('new-equipment-model').value.trim();
-    const name = document.getElementById('new-equipment-name').value.trim();
-    const value = document.getElementById('new-equipment-value').value;
-    const description = document.getElementById('new-equipment-description').value.trim();
-    
-    // Validate required fields
-    if (!categoryId || !typeId || !model || !name || !value) {
-        showToast('Please fill in all required fields', 'error');
-        return;
-    }
-    
-    if (parseFloat(value) < 0) {
-        showToast('Local renting price must be a positive number', 'error');
-        return;
-    }
-    
-    // Prepare data
-    const equipmentData = {
-        category_id: parseInt(categoryId),
-        type: parseInt(typeId),
-        model: model,
-        name: name,
-        value: parseFloat(value),
-        description: description
-    };
-    
-    try {
-        const response = await fetch('api/add_equipment.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(equipmentData)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showToast(result.message, 'success');
-            clearEquipmentForm();
-            closeAddEquipmentModal();
-        } else {
-            showToast(result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error adding equipment:', error);
-        showToast('Failed to add equipment. Please try again.', 'error');
-    }
-}
-
-// Clear equipment form
-function clearEquipmentForm() {
-    document.getElementById('new-equipment-category').value = '';
-    document.getElementById('new-equipment-type').value = '';
-    document.getElementById('new-equipment-model').value = '';
-    document.getElementById('new-equipment-name').value = '';
-    document.getElementById('new-equipment-value').value = '';
-    document.getElementById('new-equipment-description').value = '';
-}
-
-// Populate category dropdown for new equipment
-function populateEquipmentCategoryDropdown() {
-    const select = document.getElementById('new-equipment-category');
-    select.innerHTML = '<option value="">-- Select Category --</option>';
-    
-    state.categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.textContent = category.name;
-        select.appendChild(option);
-    });
-}
-
-// Show toast notification
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const messageEl = document.getElementById('toast-message');
-    
-    messageEl.textContent = message;
-    toast.className = `toast ${type}`;
-    toast.classList.add('show');
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
-}
-
-// Attach event listeners
-function attachEventListeners() {
-    // Template
-    document.getElementById('template-select').addEventListener('change', handleTemplateSelection);
-    document.getElementById('apply-template-btn').addEventListener('click', applyTemplate);
-    
-    // Modal controls
-    document.getElementById('open-user-guide-btn').addEventListener('click', openUserGuideModal);
-    document.getElementById('close-guide-modal-btn').addEventListener('click', closeUserGuideModal);
-    document.getElementById('user-guide-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeUserGuideModal();
-        }
-    });
-    
-    document.getElementById('open-add-equipment-btn').addEventListener('click', openAddEquipmentModal);
-    document.getElementById('close-modal-btn').addEventListener('click', closeAddEquipmentModal);
-    document.getElementById('add-equipment-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeAddEquipmentModal();
-        }
-    });
-    
-    // Add Equipment
-    document.getElementById('add-equipment-btn').addEventListener('click', addNewEquipment);
-    document.getElementById('clear-equipment-form-btn').addEventListener('click', clearEquipmentForm);
-    
-    // Labor inputs
-    document.getElementById('labor-hours').addEventListener('input', calculateTotals);
-    document.getElementById('hourly-rate').addEventListener('input', calculateTotals);
-    document.getElementById('margin-percentage').addEventListener('input', calculateTotals);
-    
-    // Actions
-    document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
-    document.getElementById('download-package-pdf-btn').addEventListener('click', downloadPackagePDF);
-    document.getElementById('reset-btn').addEventListener('click', () => resetAll(true));
-}
-
-// Open User Guide Modal
-function openUserGuideModal() {
-    const modal = document.getElementById('user-guide-modal');
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-// Close User Guide Modal
-function closeUserGuideModal() {
-    const modal = document.getElementById('user-guide-modal');
-    modal.classList.remove('show');
-    document.body.style.overflow = '';
-}
-
-// Open Add Equipment Modal
-function openAddEquipmentModal() {
-    const modal = document.getElementById('add-equipment-modal');
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-// Close Add Equipment Modal
-function closeAddEquipmentModal() {
-    const modal = document.getElementById('add-equipment-modal');
-    modal.classList.remove('show');
-    document.body.style.overflow = '';
-}
 

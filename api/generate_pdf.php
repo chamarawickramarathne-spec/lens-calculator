@@ -74,16 +74,18 @@ header('Content-Type: text/html; charset=utf-8');
         }
         .info-row {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         .info-label {
+            width: 160px;
             font-weight: 600;
             color: #374151;
         }
         .info-value {
+            flex: 1;
             color: #1f2937;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;

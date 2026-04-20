@@ -4,310 +4,226 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lens Calculator - Hire Artist Studio</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Force fresh CSS load -->
+    <link rel="stylesheet" href="css/style.css?v=2.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Select2 for searchable dropdowns -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
+    <div class="app-wrapper">
+        <!-- Premium Branding Header -->
         <header class="app-header">
-            <div class="header-content">
-                <img src="images/logo.png" alt="Hire Artist Studio Logo" class="app-logo">
-                <div class="header-text">
+            <div class="container">
+                <div class="header-brand">
+                    <img src="images/logo.png" alt="Logo" class="app-logo">
                     <h1 class="app-title">Package Price Calculator</h1>
                     <p class="app-subtitle">Hire Artist Studio</p>
                 </div>
             </div>
-            <div class="header-actions">
-                <button id="open-user-guide-btn" class="btn-menu" title="User Guide">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                    </svg>
-                    <span>User Guide</span>
-                </button>
-                <button id="open-add-equipment-btn" class="btn-menu" title="Add New Equipment">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14"/>
-                    </svg>
-                    <span>Add Equipment</span>
-                </button>
-            </div>
-            <p class="header-note">Help us improve our database</p>
         </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            
-            <!-- Section 1: Templates -->
-            <section class="section templates-section">
+        <!-- Stepped Flow Navigation -->
+        <nav class="step-nav">
+            <div class="step-indicator active" data-step="1" id="ind-1">
+                <span class="step-icon">1</span>
+                <span class="step-text">Setup</span>
+            </div>
+            <div class="step-indicator" data-step="2" id="ind-2">
+                <span class="step-icon">2</span>
+                <span class="step-text">Gear</span>
+            </div>
+            <div class="step-indicator" data-step="3" id="ind-3">
+                <span class="step-icon">3</span>
+                <span class="step-text">Labor</span>
+            </div>
+            <div class="step-indicator" data-step="4" id="ind-4">
+                <span class="step-icon">4</span>
+                <span class="step-text">Final</span>
+            </div>
+        </nav>
+
+        <main class="container">
+            <!-- STEP 1: INITIAL SETUP -->
+            <section class="section active" id="step-1">
                 <div class="section-header">
-                    <h2 class="section-title">
-                        <span class="section-number">1</span>
-                        Templates
-                    </h2>
-                    <p class="section-description">Choose a predefined package template to get started quickly</p>
+                    <h2 class="section-title">Start with a Template</h2>
+                    <p class="section-description">Select a predefined package to prepopulate your configuration</p>
                 </div>
-                <div class="section-content">
-                    <div class="template-selection">
-                        <label for="template-select" class="form-label">Select Package Template</label>
+
+                <div class="template-selection">
+                    <div class="form-group">
+                        <label class="form-label" for="template-select">Choose Package Type</label>
                         <select id="template-select" class="form-select">
-                            <option value="">-- Custom Package (No Template) --</option>
+                            <option value="">-- Custom (Start Blank) --</option>
                         </select>
-                        <button id="apply-template-btn" class="btn btn-secondary" disabled>Apply Template</button>
                     </div>
-                    <div id="template-info" class="template-info" style="display: none;">
-                        <h3 class="template-info-title">Template Details</h3>
-                        <p id="template-description" class="template-description"></p>
-                        <div class="template-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Event Hours:</span>
-                                <span id="template-hours" class="stat-value">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Hourly Rate:</span>
-                                <span id="template-rate" class="stat-value">$0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Margin:</span>
-                                <span id="template-margin" class="stat-value">0%</span>
-                            </div>
-                        </div>
-                    </div>
+                    <button id="apply-template-btn" class="btn btn-secondary" disabled>Apply Selection</button>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-primary btn-next-tab" data-next="2">Start Pricing Gear</button>
+                    <button id="open-user-guide-btn" class="btn btn-secondary">Help Guide</button>
                 </div>
             </section>
 
-            <!-- Section 2: Equipment Selection -->
-            <section class="section equipment-section">
+            <!-- STEP 2: EQUIPMENT GEAR -->
+            <section class="section" id="step-2">
                 <div class="section-header">
-                    <h2 class="section-title">
-                        <span class="section-number">2</span>
-                        Equipment Selection
-                    </h2>
-                    <p class="section-description">Select equipment categories and add items to your package</p>
+                    <h2 class="section-title">Select Your Gear</h2>
+                    <p class="section-description">Pick the required equipment for this specific session</p>
                 </div>
-                <div class="section-content">
-                    <div class="category-selection">
-                        <label class="form-label">Select Equipment Categories</label>
-                        <div id="category-checkboxes" class="checkbox-grid">
-                            <!-- Categories will be loaded here -->
-                        </div>
-                    </div>
-                    
-                    <div id="equipment-dropdowns" class="equipment-dropdowns">
-                        <!-- Dynamic equipment dropdowns will appear here -->
-                    </div>
 
-                    <div class="selected-equipment">
-                        <h3 class="subsection-title">Selected Equipment</h3>
-                        <div id="selected-equipment-list" class="equipment-list">
-                            <p class="empty-state">No equipment selected yet</p>
-                        </div>
-                        <div class="equipment-total">
-                            <span class="total-label">Equipment Total:</span>
-                            <span id="equipment-total" class="total-value">$0.00</span>
-                        </div>
+                <div class="form-group">
+                    <label class="form-label">Filter by Category</label>
+                    <div id="category-checkboxes" class="checkbox-grid"></div>
+                </div>
+                
+                <div id="equipment-dropdowns"></div>
+
+                <div class="selection-summary">
+                    <h3 class="subsection-title">Equipment List</h3>
+                    <div id="selected-equipment-list">
+                        <p class="empty-state">No gear selected</p>
                     </div>
+                    <div class="total-row" style="margin-top:1rem; padding-top:1rem; border-top:1px solid #eee; display:flex; justify-content:space-between; font-weight:700;">
+                        <span>Gear Subtotal:</span>
+                        <span id="equipment-total">LKR 0.00</span>
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-secondary prev-step" data-prev="1">Back</button>
+                    <button id="open-add-new-btn" class="btn btn-secondary">Add New Item</button>
+                    <button class="btn btn-primary next-step" data-next="3">Calculate Labor</button>
                 </div>
             </section>
 
-            <!-- Section 3: Basic Pricing & Margins -->
-            <section class="section labor-section">
+            <!-- STEP 3: LABOR & PROFIT -->
+            <section class="section" id="step-3">
                 <div class="section-header">
-                    <h2 class="section-title">
-                        <span class="section-number">3</span>
-                        Basic Pricing & Margins
-                    </h2>
-                    <p class="section-description">Calculate Photographer costs and profit margins</p>
+                    <h2 class="section-title">Labor & Profits</h2>
+                    <p class="section-description">Define your time and business margin</p>
                 </div>
-                <div class="section-content">
-                    <div class="labor-inputs">
-                        <div class="form-group">
-                            <label for="labor-hours" class="form-label">Event Hours</label>
-                            <input type="number" id="labor-hours" class="form-input" min="0" step="0.5" value="2" placeholder="0.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="hourly-rate" class="form-label">Hourly Rate ($)</label>
-                            <input type="number" id="hourly-rate" class="form-input" min="0" step="1" value="1000" placeholder="0.00">
-                        </div>
-                        <div class="form-group">
-                            <label for="margin-percentage" class="form-label">Profit Margin (%)</label>
-                            <input type="number" id="margin-percentage" class="form-input" min="0" max="100" step="1" value="10" placeholder="0">
-                        </div>
+
+                <div class="labor-inputs">
+                    <div class="form-group">
+                        <label class="form-label">Event Hours</label>
+                        <input type="number" id="labor-hours" class="form-input" value="2" step="0.5" min="0">
                     </div>
-                    <div class="labor-summary">
-                        <div class="summary-item">
-                            <span class="summary-label">Photographer Cost:</span>
-                            <span id="labor-total" class="summary-value">$0.00</span>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Hourly Rate (LKR)</label>
+                        <input type="number" id="hourly-rate" class="form-input" value="1000" min="0">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Desired Profit (%)</label>
+                        <input type="number" id="margin-percentage" class="form-input" value="10" min="0">
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-secondary prev-step" data-prev="2">Back</button>
+                    <button class="btn btn-primary next-step" data-next="4">View Breakdown</button>
                 </div>
             </section>
 
-            <!-- Section 4: Package Price -->
-            <section class="section price-section">
+            <!-- STEP 4: FINAL BREAKDOWN -->
+            <section class="section" id="step-4">
                 <div class="section-header">
-                    <h2 class="section-title">
-                        <span class="section-number">4</span>
-                        Package Price
-                    </h2>
-                    <p class="section-description">Final package pricing breakdown</p>
+                    <h2 class="section-title">Final Package Summary</h2>
+                    <p class="section-description">Review costs and generate your quotation</p>
                 </div>
-                <div class="section-content">
-                    <div class="price-breakdown">
-                        <div class="breakdown-item">
-                            <span class="breakdown-label">Equipment Total:</span>
-                            <span id="breakdown-equipment" class="breakdown-value">$0.00</span>
-                        </div>
-                        <div class="breakdown-item">
-                            <span class="breakdown-label">Photographer Cost:</span>
-                            <span id="breakdown-labor" class="breakdown-value">$0.00</span>
-                        </div>
-                        <div class="breakdown-item subtotal-item">
-                            <span class="breakdown-label">Subtotal:</span>
-                            <span id="breakdown-subtotal" class="breakdown-value">$0.00</span>
-                        </div>
-                        <div class="breakdown-item">
-                            <span class="breakdown-label">Profit Margin (<span id="margin-display">0</span>%):</span>
-                            <span id="breakdown-margin" class="breakdown-value">$0.00</span>
-                        </div>
-                        <div class="breakdown-item total-item">
-                            <span class="breakdown-label">Final Total:</span>
-                            <span id="breakdown-total" class="breakdown-value">$0.00</span>
-                        </div>
+
+                <div id="final-breakdown-container"></div>
+
+                <div class="quotation-meta" style="margin-top:2rem;">
+                    <div class="form-group">
+                        <label class="form-label">Project Name</label>
+                        <input type="text" id="package-name" class="form-input" placeholder="e.g. Wedding Event">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client (Optional)</label>
+                        <input type="text" id="client-name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project Notes</label>
+                        <textarea id="package-notes" class="form-input" style="height:80px; padding:10px;"></textarea>
                     </div>
 
-                    <div class="package-actions">
-                        <div class="form-group">
-                            <label for="package-name" class="form-label">Package Name</label>
-                            <input type="text" id="package-name" class="form-input" placeholder="e.g., Birthday Shoot - John Doe">
-                        </div>
-                        <div class="form-group">
-                            <label for="client-name" class="form-label">Client Name (Optional)</label>
-                            <input type="text" id="client-name" class="form-input" placeholder="Client name">
-                        </div>
-                        <div class="form-group">
-                            <label for="package-notes" class="form-label">Notes (Optional)</label>
-                            <textarea id="package-notes" class="form-textarea" rows="3" placeholder="Additional notes or requirements..."></textarea>
-                        </div>
-                        <div class="action-buttons">
-                            <button id="download-pdf-btn" class="btn btn-success">Download Price Breakdown</button>
-                            <button id="download-package-pdf-btn" class="btn btn-success">Download Package Details</button>
-                            <button id="reset-btn" class="btn btn-outline">Reset All</button>
-                        </div>
-                    </div>
                 </div>
+
+                <div class="step-actions">
+                    <button class="btn btn-secondary prev-step" data-prev="3">Edit Costs</button>
+                    <button id="download-package-pdf-btn" class="btn btn-secondary">Package Details</button>
+                    <button id="download-pdf-btn" class="btn btn-success">Download PDF</button>
+                    <button id="reset-btn" class="btn btn-secondary">Start New</button>
+                </div>
+
             </section>
         </main>
-        
-        <!-- Footer -->
+
         <footer class="app-footer">
-            <p>&copy; 2025 Hire Artist Studio. All rights reserved.</p>
+            <p>&copy; 2025 Hire Artist Studio. Professional Pricing System.</p>
         </footer>
+
+        <!-- Floating Summary Bar (Island Style) -->
+        <div class="sticky-summary">
+            <div class="summary-island">
+                <div class="summary-stat-item">
+                    <span class="label">Total Price</span>
+                    <span id="sticky-total" class="value">LKR 0.00</span>
+                </div>
+                <button class="btn btn-primary" id="mobile-next-btn">Next Step</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast"><span id="toast-message"></span></div>
-
-    <!-- User Guide Modal -->
+    <!-- Modals -->
     <div id="user-guide-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">පරිශීලක අත්පොත (User Guide)</h2>
-                <button class="modal-close" id="close-guide-modal-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="user-guide-content">
-                    <p><strong>මෙම ඇප් එක භාවිතා කරන ආකාරය පියවරෙන් පියවර මෙන්න:</strong></p>
-                    
-                    <div class="guide-step">
-                        <h3>පියවර 01: Template එකක් තෝරා ගැනීම (Choose a Template)</h3>
-                        <p>ඔබට 'Birthday Shoot', 'Wedding Shoot' වැනි කලින් සකස් කළ පැකේජ වර්ගයක් තෝරාගත හැක. නැතහොත් 'Custom Package' තෝරා මුල සිටම ඔබේ පැකේජය නිර්මාණය කළ හැක.</p>
-                    </div>
-
-                    <div class="guide-step">
-                        <h3>පියවර 02: උපකරණ එකතු කිරීම (Equipment Selection)</h3>
-                        <p>ඔබ භාවිතා කරන කැමරා (Camera Body), ලෙන්ස් (Lenses), ලයිට් (Lighting) සහ අනෙකුත් උපකරණ තෝරාගන්න. මෙහිදී එක් එක් උපකරණයේ වටිනාකම අනුව ස්වයංක්‍රීයව පිරිවැය ගණනය වේ.</p>
-                    </div>
-
-                    <div class="guide-step">
-                        <h3>පියවර 03: ශිල්පියාගේ ගාස්තුව (Photographer Cost)</h3>
-                        <p>ඔබ වැඩ කරන පැය ගණන (Event Hours) සහ පැයකට ඔබ අය කරන මුදල (Hourly Rate) ඇතුළත් කරන්න.</p>
-                    </div>
-
-                    <div class="guide-step">
-                        <h3>පියවර 04: ලාභාංශ එකතු කිරීම (Profit Margin)</h3>
-                        <p>ඔබේ නඩත්තු වියදම් සහ ශුද්ධ ලාභය සඳහා අවශ්‍ය ප්‍රතිශතය (%) මෙහි ඇතුළත් කරන්න.</p>
-                    </div>
-
-                    <div class="guide-step">
-                        <h3>පියවර 05: අවසාන මිල සහ වාර්තාව (Final Price & Download)</h3>
-                        <p>සියලු විස්තර ඇතුළත් කළ පසු ඇප් එක මගින් අවසාන මිල පෙන්වනු ඇත. ඔබට මෙම සම්පූර්ණ විස්තරය (Price Breakdown) PDF එකක් ලෙස ඩවුන්ලෝඩ් කර පාරිභෝගිකයාට ලබා දිය හැක.</p>
-                    </div>
-                </div>
-            </div>
+            <h2>User Guide</h2>
+            <p>1. Setup your template. 2. Select gear. 3. Set labor. 4. Download PDF.</p>
+            <button class="btn btn-secondary" id="close-guide-modal-btn">Close</button>
         </div>
     </div>
 
-    <!-- Add Equipment Modal -->
     <div id="add-equipment-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add New Equipment</h2>
-                <button class="modal-close" id="close-modal-btn">&times;</button>
+            <h2 id="modal-title">Add New Gear</h2>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select id="new-equipment-category" class="form-select"></select>
             </div>
-            <div class="modal-body">
-                <p class="modal-description">Add new equipment to the system (will be inactive until approved). Please enter the local renting price for the equipment.</p>
-                <div class="add-equipment-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="new-equipment-category" class="form-label">Category *</label>
-                            <select id="new-equipment-category" class="form-select" required>
-                                <option value="">-- Select Category --</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="new-equipment-type" class="form-label">Type *</label>
-                            <select id="new-equipment-type" class="form-select" required>
-                                <option value="">-- Select Type --</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="new-equipment-model" class="form-label">Model *</label>
-                            <input type="text" id="new-equipment-model" class="form-input" placeholder="e.g., Canon, Sony, Sigma" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="new-equipment-name" class="form-label">Name *</label>
-                            <input type="text" id="new-equipment-name" class="form-input" placeholder="e.g., Canon EOS R5 Body" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="new-equipment-value" class="form-label">Local Renting Price (LKR) *</label>
-                            <input type="number" id="new-equipment-value" class="form-input" min="0" step="0.01" placeholder="0.00" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="new-equipment-description" class="form-label">Description (Optional)</label>
-                            <input type="text" id="new-equipment-description" class="form-input" placeholder="Additional details...">
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button id="add-equipment-btn" class="btn btn-primary">Add Equipment</button>
-                        <button id="clear-equipment-form-btn" class="btn btn-outline">Clear Form</button>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select id="new-equipment-type" class="form-select"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Model</label>
+                <input type="text" id="new-equipment-model" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" id="new-equipment-name" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Price (LKR)</label>
+                <input type="number" id="new-equipment-value" class="form-input">
+            </div>
+            <div class="step-actions">
+                <button id="add-equipment-btn" class="btn btn-primary">Save Gear</button>
+                <button id="close-modal-btn" class="btn btn-secondary">Cancel</button>
             </div>
         </div>
     </div>
+
+    <div id="toast" class="toast"><span id="toast-message"></span></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Force fresh JS load -->
+    <script src="js/app.js?v=2.7"></script>
 </body>
 </html>
