@@ -1,289 +1,81 @@
-# Lens Calculator
-
-**Photography Pricing Calculator for Professional Photographers**
-
-_Hire Artist Studio_
+# Lens Calculator 📸
+**Professional Photography Pricing & Quotation System**
 
 ---
 
-## Overview
+## 🇱🇰 සිංහල හැඳින්වීම (Sinhala Overview)
 
-Lens Calculator is a comprehensive web application designed to help photographers calculate accurate pricing for their photography packages. The application allows photographers to:
+**Lens Calculator** යනු වෘත්තීය මට්ටමේ ඡායාරූප ශිල්පීන් (Photographers) සඳහාම විශේෂයෙන් නිර්මාණය කරන ලද මිල ගණන් ගණනය කිරීමේ (Pricing Calculator) මෘදුකාංගයකි. 
 
-- Select from predefined package templates (e.g., Birthday Shoot, Wedding, Portrait Studio)
-- Choose equipment categories and individual items
-- Calculate labor costs based on hours and hourly rate
-- Apply profit margins
-- Generate detailed pricing breakdowns
-- Save packages to database
-- Download professional PDF quotations
+ඡායාරූපකරණ ව්‍යාපාරයකදී පැකේජයක මිල තීරණය කිරීමේදී ඇතිවන ගැටළු මඟහරවා ගැනීමට මෙය විශාල සහයෝගයක් ලබා දෙයි. මෙහි ප්‍රධාන වාසි කිහිපයකි:
 
----
-
-## Features
-
-### 1. **Template System**
-
-- Pre-configured packages for common photography scenarios
-- Templates include: Birthday Shoot, Wedding Photography, Portrait Studio, Product Photography, Event Coverage
-- One-click application of template settings and equipment
-
-### 2. **Equipment Management**
-
-- 8 equipment categories: Camera Bodies, Lenses, Lighting, Audio, Stabilization, Accessories, Backdrops, Props
-- Comprehensive equipment database with values
-- Dynamic category selection with cascading dropdowns
-- Quantity support for multiple items
-
-### 3. **Labor & Margin Calculator**
-
-- Labor hours input
-- Hourly rate configuration
-- Profit margin percentage calculation
-- Real-time total updates
-
-### 4. **Package Pricing**
-
-- Detailed cost breakdown
-- Equipment total
-- Labor cost calculation
-- Subtotal and final total with margins
-- Package naming and client information
-
-### 5. **PDF Generation**
-
-- Professional quotation PDFs
-- Complete equipment list
-- Cost breakdown
-- Client and package details
-- Print-ready format
+*   **නිවැරදි මිල ගණනය කිරීම:** භාවිතා කරන කැමරා, ලෙන්ස් සහ අනෙකුත් උපකරණ වල වටිනාකම මෙන්ම ඔබ වැය කරන කාලය (Labor Hours) අනුව නිවැරදිම මිල තීරණය කළ හැකිය.
+*   **සූදානම් කළ පැකේජ (Templates):** Wedding, Birthday, Portrait වැනි විවිධ ඡායාරූපකරණ පැකේජ සඳහා අවශ්‍ය උපකරණ ලැයිස්තුවක් පෙර සැකසූ templates මඟින් පහසුවෙන් තෝරාගත හැක.
+*   **වෘත්තීය PDF පත්‍රිකා (PDF Quotations):** ගණනය කිරීම අවසානයේ ඔබේ පාරිභෝගිකයාට ලබා දීමට ඉතා ආකර්ෂණීය සහ වෘත්තීය මට්ටමේ PDF quotation එකක් ක්ෂණිකව නිර්මාණය කරගත හැක.
+*   **ලාභය කළමනාකරණය:** පැකේජය සඳහා ඔබ අපේක්ෂා කරන ලාභාංශය (Profit Margin) ඇතුළත් කර අවසන් මිල තීරණය කිරීමේ හැකියාව ඇත.
 
 ---
 
-## Installation
+## 🇬🇧 English Overview
+
+**Lens Calculator** is a comprehensive web application designed for professional photographers to calculate accurate pricing for their services. It streamlines the budgeting process, ensuring that every piece of equipment and every hour of labor is accounted for.
+
+### How it helps you:
+*   **Precise Cost Analysis:** Calculate costs based on equipment depreciation/rental values and labor hours.
+*   **Effortless Planning:** Use predefined templates for common photography scenarios like Weddings, Birthdays, and Studio sessions to save time.
+*   **Professionalism:** Instantly generate and download sleek PDF quotations to send to your clients, enhancing your professional image.
+*   **Business Growth:** Gain better insight into your profit margins, helping you run a more sustainable and profitable photography business.
+
+---
+
+## 🚀 Main Features
+
+### 1. Template System
+- Pre-configured equipment lists for common shoots.
+- One-click application of settings for Birthday, Wedding, Portrait, and Event photography.
+
+### 2. Equipment Management
+- 8 Categories: Camera Bodies, Lenses, Lighting, Audio, Stabilization, Accessories, Backdrops, Props.
+- Comprehensive database with realistic rental/usage values.
+
+### 3. Labor & Margin Calculator
+- Input labor hours and hourly rates.
+- Apply custom profit margins (e.g., 20%, 30%).
+- Real-time price updates as you modify settings.
+
+### 4. PDF Generation
+- Generate branded, professional quotation documents.
+- Includes detailed cost breakdown and equipment list.
+
+---
+
+## 🛠️ Installation & Setup
 
 ### Prerequisites
-
-- **XAMPP/WAMP** or similar web server with:
-  - PHP 7.4 or higher
-  - MySQL 5.7 or higher
-  - Apache web server
+- **XAMPP/WAMP** (Apache, PHP 7.4+, MySQL)
+- Web Browser (Chrome, Edge, or Firefox)
 
 ### Setup Steps
-
-1. **Copy Files**
-
-   - Place the `lens-calculator` folder in your web server's `htdocs` directory
-   - Path should be: `htdocs/lens-calculator/`
-
-2. **Database Setup**
-
-   - Open phpMyAdmin (http://localhost/phpmyadmin)
-   - Create a new database named `lens_calculator`
-   - Import the database schema:
-     - Go to the Import tab
-     - Select `database/schema.sql`
-     - Click "Go" to execute
-   - Import sample data:
-     - Select `database/sample_data.sql`
-     - Click "Go" to execute
-
-3. **Database Configuration**
-
-   - Open `api/config.php`
-   - Verify/update database credentials:
-     ```php
-     define('DB_HOST', 'localhost');
-     define('DB_USER', 'root');
-     define('DB_PASS', '');
-     define('DB_NAME', 'lens_calculator');
-     ```
-
-4. **Access Application**
-   - Open browser and navigate to: `http://localhost/lens-calculator/`
-   - The application should load with all features ready
+1.  **Copy Files:** Place the `lens-calculator` folder in your `htdocs` directory.
+2.  **Database Setup:**
+    - Open `phpMyAdmin` and create a database named `lens_calculator`.
+    - Import `database/schema.sql` and then `database/sample_data.sql`.
+3.  **Config:** Verify database credentials in `api/config.php`.
+4.  **Access:** Open [http://localhost/lens-calculator/](http://localhost/lens-calculator/) in your browser.
 
 ---
 
-## Usage Guide
-
-### Getting Started
-
-1. **Using Templates (Recommended for Beginners)**
-
-   - Select a template from the dropdown in Section 1
-   - Click "Apply Template" to auto-populate equipment and settings
-   - Review and modify as needed
-
-2. **Custom Package Creation**
-
-   - Select equipment categories by checking boxes in Section 2
-   - Choose specific equipment items from the dropdowns
-   - Set quantity and click "Add" for each item
-   - Enter labor hours and hourly rate in Section 3
-   - Set your profit margin percentage
-   - View the final pricing in Section 4
-
-3. **Saving & Exporting**
-   - Enter a package name (required)
-   - Optionally add client name and notes
-   - Click "Save Package" to store in database
-   - Click "Download PDF" to generate a quotation document
-
-### Tips
-
-- Start with templates to understand typical package configurations
-- Adjust equipment selections to match your actual gear
-- Update hourly rates based on your experience level
-- Use profit margins between 20-35% for sustainable business
-- Save packages for future reference and client follow-ups
+## 📂 Project Structure
+- `index.html` - Main UI
+- `js/app.js` - Logic & Calculations
+- `css/style.css` - Modern Responsive Design
+- `api/` - PHP Backend for database interactions & PDF generation
+- `database/` - SQL scripts for setup
 
 ---
 
-## Database Structure
-
-### Tables
-
-1. **category_types** - Equipment categories
-2. **equipment_details** - Individual equipment items with values
-3. **templates** - Predefined package templates
-4. **template_equipment** - Equipment assigned to templates
-5. **packages** - Saved customer packages
-6. **package_equipment** - Equipment in saved packages
-
-### Sample Data Included
-
-- **8 Equipment Categories**
-- **50+ Equipment Items** with realistic pricing
-- **5 Package Templates**:
-  - Birthday Shoot - Basic
-  - Wedding Shoot - Professional
-  - Portrait Studio - Standard
-  - Product Photography - Basic
-  - Event Coverage - Standard
+## 🤝 Support
+Developed for **Hire Artist Studio**. For any inquiries or customization requests, please refer to the project documentation or contact the development team.
 
 ---
-
-## File Structure
-
-```
-lens-calculator/
-├── index.html              # Main application page
-├── css/
-│   └── style.css          # Application styles
-├── js/
-│   └── app.js             # JavaScript functionality
-├── api/
-│   ├── config.php         # Database configuration
-│   ├── get_categories.php # Fetch categories
-│   ├── get_equipment.php  # Fetch equipment
-│   ├── get_templates.php  # Fetch templates
-│   ├── save_package.php   # Save package to database
-│   └── generate_pdf.php   # Generate PDF quotation
-└── database/
-    ├── schema.sql         # Database schema
-    └── sample_data.sql    # Sample data
-```
-
----
-
-## Customization
-
-### Adding Equipment
-
-1. Open phpMyAdmin
-2. Go to `equipment_details` table
-3. Insert new row with:
-   - category_id (1-8 for existing categories)
-   - type, model, name
-   - value (daily rental/usage cost)
-
-### Creating Templates
-
-1. Insert into `templates` table with package details
-2. Link equipment items in `template_equipment` table
-
-### Modifying Values
-
-- Update equipment values in `equipment_details` table
-- Adjust default labor rates in templates
-- Modify profit margins as needed
-
----
-
-## Browser Compatibility
-
-- Chrome (recommended)
-- Firefox
-- Edge
-- Safari
-
----
-
-## Troubleshooting
-
-### Database Connection Error
-
-- Verify MySQL is running in XAMPP/WAMP
-- Check database credentials in `api/config.php`
-- Ensure `lens_calculator` database exists
-
-### No Data Showing
-
-- Verify both SQL files were imported successfully
-- Check browser console for JavaScript errors
-- Ensure API files have correct file paths
-
-### PDF Not Generating
-
-- Check if PHP is configured correctly
-- Verify `api/generate_pdf.php` is accessible
-- Ensure no special characters in package name
-
----
-
-## Future Enhancements
-
-- User authentication system
-- Multi-currency support
-- Equipment inventory tracking
-- Client management system
-- Invoice generation
-- Email quotation sending
-- Mobile app version
-- Advanced reporting and analytics
-
----
-
-## Support
-
-For issues or questions:
-
-1. Check the troubleshooting section
-2. Review database configuration
-3. Verify all files are properly uploaded
-4. Check PHP error logs in XAMPP/WAMP
-
----
-
-## Credits
-
-**Lens Calculator** - Photography Pricing Calculator
-Developed for Hire Artist Studio
-
-Built with:
-
-- HTML5, CSS3, JavaScript
-- PHP 7.4+
-- MySQL
-- Responsive Design
-
----
-
-## License
-
-This application is provided as-is for use by Hire Artist Studio.
-
----
-
-_Last Updated: November 10, 2025_
+_Last Updated: April 2026_
