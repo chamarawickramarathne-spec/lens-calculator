@@ -7,6 +7,12 @@ $hourlyRate = $_GET['hourly_rate'] ?? 0;
 $marginPercentage = $_GET['margin_percentage'] ?? 0;
 $equipmentTotal = $_GET['equipment_total'] ?? 0;
 $laborTotal = $_GET['labor_total'] ?? 0;
+$extraGearCost = floatval($_GET['extra_gear_cost'] ?? 0);
+$transportationCost = floatval($_GET['transportation_cost'] ?? 0);
+$assistantPay = floatval($_GET['assistant_pay'] ?? 0);
+$editingCost = floatval($_GET['editing_cost'] ?? 0);
+$additionalCost = floatval($_GET['additional_cost'] ?? 0);
+$additionalCostsTotal = floatval($_GET['additional_costs_total'] ?? 0);
 $subtotal = $_GET['subtotal'] ?? 0;
 $marginAmount = $_GET['margin_amount'] ?? 0;
 $finalTotal = $_GET['final_total'] ?? 0;
@@ -237,6 +243,36 @@ header('Content-Type: text/html; charset=utf-8');
                 <td>Event Hours (<?php echo number_format($laborHours, 1); ?> hours @ <?php echo $currency . number_format($hourlyRate, 2); ?>/hr):</td>
                 <td class="text-right"><?php echo $currency . number_format($laborTotal, 2); ?></td>
             </tr>
+            <?php if ($extraGearCost > 0): ?>
+            <tr class="summary-row">
+                <td>Extra Gear Cost:</td>
+                <td class="text-right"><?php echo $currency . number_format($extraGearCost, 2); ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if ($transportationCost > 0): ?>
+            <tr class="summary-row">
+                <td>Transportation Cost:</td>
+                <td class="text-right"><?php echo $currency . number_format($transportationCost, 2); ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if ($assistantPay > 0): ?>
+            <tr class="summary-row">
+                <td>Assistant Pay:</td>
+                <td class="text-right"><?php echo $currency . number_format($assistantPay, 2); ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if ($editingCost > 0): ?>
+            <tr class="summary-row">
+                <td>Editing / Retouching Cost:</td>
+                <td class="text-right"><?php echo $currency . number_format($editingCost, 2); ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if ($additionalCost > 0): ?>
+            <tr class="summary-row">
+                <td>Additional Cost:</td>
+                <td class="text-right"><?php echo $currency . number_format($additionalCost, 2); ?></td>
+            </tr>
+            <?php endif; ?>
             <tr class="subtotal-row">
                 <td>Subtotal:</td>
                 <td class="text-right"><?php echo $currency . number_format($subtotal, 2); ?></td>

@@ -157,9 +157,15 @@ function calculateTotals() {
     const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
     const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
     const laborTotal = hours * rate;
+    const extraGear = parseFloat(document.getElementById('extra-gear-cost').value) || 0;
+    const transportation = parseFloat(document.getElementById('transportation-cost').value) || 0;
+    const assistantPay = parseFloat(document.getElementById('assistant-pay').value) || 0;
+    const editingCost = parseFloat(document.getElementById('editing-cost').value) || 0;
+    const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
     const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
 
-    const subtotal = gearTotal + laborTotal;
+    const additionalTotal = extraGear + transportation + assistantPay + editingCost + additionalCost;
+    const subtotal = gearTotal + laborTotal + additionalTotal;
     const profit = subtotal * (margin / 100);
     const finalTotal = subtotal + profit;
 
@@ -168,21 +174,39 @@ function calculateTotals() {
     
     document.getElementById('sticky-total').textContent = `${state.currency}${finalTotal.toLocaleString()}`;
 
-    renderBreakdown(gearTotal, laborTotal, margin, profit, finalTotal);
+    renderBreakdown(gearTotal, laborTotal, extraGear, transportation, assistantPay, editingCost, additionalCost, margin, profit, finalTotal);
 }
 
-function renderBreakdown(gear, labor, marginPct, profit, total) {
+function renderBreakdown(gear, labor, extraGear, transportation, assistantPay, editingCost, additionalCost, marginPct, profit, total) {
     const container = document.getElementById('final-breakdown-container');
     if (!container) return;
+
+    const additionalTotal = extraGear + transportation + assistantPay + editingCost + additionalCost;
+
+    const row = (label, value, style = '') =>
+        value > 0 || label.includes('Cost') || label.includes('Service') ? `
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.65rem; ${style}">
+            <span style="color:#555">${label}</span>
+            <span style="font-weight:600">${state.currency}${value.toLocaleString()}</span>
+        </div>` : '';
+
     container.innerHTML = `
         <div style="padding:1.5rem; background:#f9fafb; border-radius:16px; border:1px solid #eee;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
-                <span style="color:#666">Gear Costs:</span>
-                <span style="font-weight:600">${state.currency}${gear.toLocaleString()}</span>
+            ${row('Gear Costs:', gear)}
+            ${row('Service Cost:', labor)}
+            ${additionalTotal > 0 ? `
+            <div style="border-top:1px dashed #ddd; margin:0.75rem 0; padding-top:0.75rem;">
+                <span style="font-size:0.75rem; color:#999; text-transform:uppercase; letter-spacing:0.05em;">Additional Costs</span>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
-                <span style="color:#666">Service Cost:</span>
-                <span style="font-weight:600">${state.currency}${labor.toLocaleString()}</span>
+            ${extraGear > 0 ? row('Extra Gear Cost:', extraGear) : ''}
+            ${transportation > 0 ? row('Transportation Cost:', transportation) : ''}
+            ${assistantPay > 0 ? row('Assistant Pay:', assistantPay) : ''}
+            ${editingCost > 0 ? row('Editing / Retouching:', editingCost) : ''}
+            ${additionalCost > 0 ? row('Additional Cost:', additionalCost) : ''}
+            ` : ''}
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.65rem; margin-top:0.75rem; border-top:1px dashed #ddd; padding-top:0.75rem;">
+                <span style="color:#555">Subtotal:</span>
+                <span style="font-weight:600">${state.currency}${(gear + labor + additionalTotal).toLocaleString()}</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; color:#10b981; font-weight:600;">
                 <span>Business Margin (${marginPct}%):</span>
@@ -211,6 +235,9 @@ function goToStep(step) {
 
     const mobileBtn = document.getElementById('mobile-next-btn');
     if (mobileBtn) mobileBtn.textContent = step === 4 ? 'Download PDF' : 'Next Step';
+
+    // Always recalculate when entering the final step
+    if (step === 4) calculateTotals();
     
     window.scrollTo({ top: 30, behavior: 'smooth' });
 }
@@ -235,7 +262,7 @@ function attachEventListeners() {
     });
 
     // Inputs
-    ['labor-hours', 'hourly-rate', 'margin-percentage'].forEach(id => {
+    ['labor-hours', 'hourly-rate', 'extra-gear-cost', 'transportation-cost', 'assistant-pay', 'editing-cost', 'additional-cost', 'margin-percentage'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', calculateTotals);
     });
 
@@ -331,8 +358,14 @@ function downloadPDF() {
     const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
     const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
     const laborTotal = hours * rate;
+    const extraGear = parseFloat(document.getElementById('extra-gear-cost').value) || 0;
+    const transportation = parseFloat(document.getElementById('transportation-cost').value) || 0;
+    const assistantPay = parseFloat(document.getElementById('assistant-pay').value) || 0;
+    const editingCost = parseFloat(document.getElementById('editing-cost').value) || 0;
+    const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
     const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
-    const subtotal = gearTotal + laborTotal;
+    const additionalTotal = extraGear + transportation + assistantPay + editingCost + additionalCost;
+    const subtotal = gearTotal + laborTotal + additionalTotal;
     const profit = subtotal * (margin / 100);
     const finalTotal = subtotal + profit;
 
@@ -341,16 +374,21 @@ function downloadPDF() {
         client_name: document.getElementById('client-name').value || '',
         labor_hours: hours,
         hourly_rate: rate,
+        extra_gear_cost: extraGear.toFixed(2),
+        transportation_cost: transportation.toFixed(2),
+        assistant_pay: assistantPay.toFixed(2),
+        editing_cost: editingCost.toFixed(2),
+        additional_cost: additionalCost.toFixed(2),
         margin_percentage: margin,
         equipment_total: gearTotal.toFixed(2),
         labor_total: laborTotal.toFixed(2),
+        additional_costs_total: additionalTotal.toFixed(2),
         subtotal: subtotal.toFixed(2),
         margin_amount: profit.toFixed(2),
         final_total: finalTotal.toFixed(2),
         currency: state.currency,
         notes: document.getElementById('package-notes').value || '',
         equipment: JSON.stringify(state.selectedEquipment.map(e => ({
-
             name: e.name,
             model: e.model || '',
             type: e.type_name || 'Gear',
@@ -367,8 +405,14 @@ function downloadPackagePDF() {
     const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
     const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
     const laborTotal = hours * rate;
+    const extraGear = parseFloat(document.getElementById('extra-gear-cost').value) || 0;
+    const transportation = parseFloat(document.getElementById('transportation-cost').value) || 0;
+    const assistantPay = parseFloat(document.getElementById('assistant-pay').value) || 0;
+    const editingCost = parseFloat(document.getElementById('editing-cost').value) || 0;
+    const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
     const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
-    const subtotal = gearTotal + laborTotal;
+    const additionalTotal = extraGear + transportation + assistantPay + editingCost + additionalCost;
+    const subtotal = gearTotal + laborTotal + additionalTotal;
     const profit = subtotal * (margin / 100);
     const finalTotal = subtotal + profit;
 
