@@ -198,7 +198,7 @@ body {
     padding: 1.5rem;
 }
 .modal.show { display: flex; }
-.modal-content { background: white; width: 100%; max-width: 450px; border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+.modal-content {background: white;width: 100%;max-width: 450px; padding: 1rem;box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);height: 100%;overflow: auto;font-size: 12px;}
 
 /* Customizations */
 .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.5rem; }
@@ -260,4 +260,42 @@ body {
 @media (max-width: 640px) {
     .step-text { display: none; }
     .step-indicator { padding: 0.5rem; }
+}
+
+/* User Guide Styles */
+.user-guide-content {
+    color: var(--dark);
+}
+
+.user-guide-content > p {
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+}
+
+.guide-step {
+    background: var(--accent-lighter);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.guide-step:hover {
+    background: var(--accent-light);
+    transform: translateX(5px);
+    box-shadow: var(--shadow-md);
+}
+
+.guide-step h3 {
+    color: var(--accent-red);
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.guide-step p {
+    color: var(--dark-light);
+    line-height: 1.7;
+    font-size: 0.8rem;
 }
