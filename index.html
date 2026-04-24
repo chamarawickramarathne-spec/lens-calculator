@@ -205,11 +205,13 @@
     </div>
 
     <!-- Modals -->
-    <div id="user-guide-modal" class="modal">
+    <div id="user-guide-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="user-guide-title">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">පරිශීලක අත්පොත (User Guide)</h2>
-                <button class="modal-close" id="close-guide-modal-btn">&times;</button>
+                <h2 class="modal-title" id="user-guide-title">පරිශීලක අත්පොත (User Guide)</h2>
+                <button class="modal-close" id="close-guide-modal-btn" aria-label="Close User Guide" tabindex="0">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="user-guide-content">

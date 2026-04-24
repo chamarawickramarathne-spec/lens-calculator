@@ -198,7 +198,58 @@ body {
     padding: 1.5rem;
 }
 .modal.show { display: flex; }
-.modal-content {background: white;width: 100%;max-width: 450px; padding: 1rem;box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);height: 100%;overflow: auto;font-size: 12px;}
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 450px;
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    border-radius: var(--radius-lg);
+    max-height: 90vh;
+    height: auto;
+    overflow-y: auto;
+    font-size: 13px;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin: 0;
+}
+
+.modal-close {
+    background: #f3f4f6;
+    border: none;
+    color: #dc2626;
+    font-size: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: auto;
+}
+.modal-close:hover, .modal-close:focus {
+    background: #fee2e2;
+    outline: none;
+    color: #b91c1c;
+}
 
 /* Customizations */
 .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.5rem; }

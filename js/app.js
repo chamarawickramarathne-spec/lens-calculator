@@ -16,11 +16,30 @@ const state = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    logAccess();
     initializeApp();
     attachEventListeners();
     goToStep(1);
     calculateTotals();
 });
+
+// Log application access
+async function logAccess() {
+    try {
+        const response = await fetch('api/log_access.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        if (data.success) {
+            console.log('Access logged:', data.message);
+        }
+    } catch (e) {
+        console.error('Failed to log access:', e);
+    }
+}
 
 async function initializeApp() {
     try {
@@ -268,7 +287,25 @@ function attachEventListeners() {
 
     // Modals
     document.getElementById('open-user-guide-btn')?.addEventListener('click', () => document.getElementById('user-guide-modal').classList.add('show'));
-    document.getElementById('close-guide-modal-btn')?.addEventListener('click', () => document.getElementById('user-guide-modal').classList.remove('show'));
+    document.getElementById('close-guide-modal-btn')?.addEventListener('click', closeUserGuideModal);
+
+    // Accessibility: close modal with Escape key
+    document.addEventListener('keydown', function (e) {
+        const modal = document.getElementById('user-guide-modal');
+        if (modal.classList.contains('show') && (e.key === 'Escape' || e.key === 'Esc')) {
+            closeUserGuideModal();
+        }
+    });
+
+    // Accessibility: close modal when clicking outside content
+    document.getElementById('user-guide-modal')?.addEventListener('mousedown', function(e) {
+        if (e.target === this) closeUserGuideModal();
+    });
+
+    function closeUserGuideModal() {
+        document.getElementById('user-guide-modal').classList.remove('show');
+        document.getElementById('close-guide-modal-btn').blur();
+    }
     document.getElementById('open-add-new-btn')?.addEventListener('click', () => document.getElementById('add-equipment-modal').classList.add('show'));
     document.getElementById('close-modal-btn')?.addEventListener('click', () => document.getElementById('add-equipment-modal').classList.remove('show'));
 
