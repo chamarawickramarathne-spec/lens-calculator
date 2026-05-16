@@ -316,6 +316,24 @@ function attachEventListeners() {
     });
     document.getElementById('apply-template-btn')?.addEventListener('click', applyTemplate);
 
+    // App Drawer (Ecosystem)
+    const drawerOverlay = document.getElementById('app-drawer');
+    document.getElementById('drawer-trigger-btn')?.addEventListener('click', () => drawerOverlay.classList.add('show'));
+    document.getElementById('close-drawer-btn')?.addEventListener('click', () => drawerOverlay.classList.remove('show'));
+    
+    drawerOverlay?.addEventListener('mousedown', function(e) {
+        if (e.target === this) drawerOverlay.classList.remove('show');
+    });
+
+    // Close on escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            drawerOverlay?.classList.remove('show');
+            document.getElementById('user-guide-modal')?.classList.remove('show');
+            document.getElementById('add-equipment-modal')?.classList.remove('show');
+        }
+    });
+
     // Actions
     document.getElementById('download-pdf-btn')?.addEventListener('click', downloadPDF);
     document.getElementById('download-package-pdf-btn')?.addEventListener('click', downloadPackagePDF);
