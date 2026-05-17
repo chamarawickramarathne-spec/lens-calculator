@@ -306,8 +306,26 @@ function attachEventListeners() {
         document.getElementById('user-guide-modal').classList.remove('show');
         document.getElementById('close-guide-modal-btn').blur();
     }
-    document.getElementById('open-add-new-btn')?.addEventListener('click', () => document.getElementById('add-equipment-modal').classList.add('show'));
-    document.getElementById('close-modal-btn')?.addEventListener('click', () => document.getElementById('add-equipment-modal').classList.remove('show'));
+
+    // Add New Gear modal — open
+    document.getElementById('open-add-new-btn')?.addEventListener('click', () => {
+        resetGearModal();
+        document.getElementById('add-equipment-modal').classList.add('show');
+    });
+
+    // Add New Gear modal — close (Cancel button + X button)
+    const closeGearModal = () => {
+        document.getElementById('add-equipment-modal').classList.remove('show');
+        resetGearModal();
+    };
+    document.getElementById('close-modal-btn')?.addEventListener('click', closeGearModal);
+    document.getElementById('close-gear-modal-x')?.addEventListener('click', closeGearModal);
+    document.getElementById('add-equipment-modal')?.addEventListener('mousedown', function(e) {
+        if (e.target === this) closeGearModal();
+    });
+
+    // Save Gear
+    document.getElementById('add-equipment-btn')?.addEventListener('click', saveNewGear);
 
     // Template
     document.getElementById('template-select')?.addEventListener('change', (e) => {
@@ -377,27 +395,109 @@ function renderTemplateDropdown(data) {
 }
 
 function populateModalCategories() {
-    const sel = document.getElementById('new-equipment-category');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">-- Choose Category --</option>';
-    state.categories.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
-        sel.appendChild(opt);
+    const container = document.getElementById('new-equipment-category');
+    if (!container) return;
+    container.innerHTML = '';
+    state.categories.forEach((c) => {
+        const radioId = `pill-cat-${c.id}`;
+
+        const input = document.createElement('input');
+        input.type  = 'radio';
+        input.name  = 'gear-category';
+        input.id    = radioId;
+        input.value = c.id;
+
+        const label = document.createElement('label');
+        label.className = 'pill-label';
+        label.htmlFor   = radioId;
+        label.innerHTML = `<svg class="pill-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${c.name}`;
+
+        container.appendChild(input);
+        container.appendChild(label);
     });
 }
 
 function populateModalTypes() {
-    const sel = document.getElementById('new-equipment-type');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">-- Choose Type --</option>';
-    state.equipmentTypes.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.id;
-        opt.textContent = t.type;
-        sel.appendChild(opt);
+    const container = document.getElementById('new-equipment-type');
+    if (!container) return;
+    container.innerHTML = '';
+    state.equipmentTypes.forEach((t) => {
+        const radioId = `pill-type-${t.id}`;
+
+        const input = document.createElement('input');
+        input.type  = 'radio';
+        input.name  = 'gear-type';
+        input.id    = radioId;
+        input.value = t.id;
+
+        const label = document.createElement('label');
+        label.className = 'pill-label';
+        label.htmlFor   = radioId;
+        label.innerHTML = `<svg class="pill-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${t.type}`;
+
+        container.appendChild(input);
+        container.appendChild(label);
     });
+}
+
+function resetGearModal() {
+    // Deselect all radio pills
+    document.querySelectorAll('input[name="gear-category"]').forEach(r => r.checked = false);
+    document.querySelectorAll('input[name="gear-type"]').forEach(r => r.checked = false);
+    // Clear text / number inputs
+    ['new-equipment-name', 'new-equipment-model', 'new-equipment-value'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+}
+
+async function saveNewGear() {
+    const categoryId = document.querySelector('input[name="gear-category"]:checked')?.value;
+    const typeId     = document.querySelector('input[name="gear-type"]:checked')?.value;
+    const name       = document.getElementById('new-equipment-name')?.value.trim();
+    const model      = document.getElementById('new-equipment-model')?.value.trim();
+    const value      = parseFloat(document.getElementById('new-equipment-value')?.value);
+
+    // Validation
+    if (!categoryId) { showToast('Please select a category.', 'error'); return; }
+    if (!typeId)      { showToast('Please select a gear type.', 'error'); return; }
+    if (!name)        { showToast('Please enter a gear name.', 'error'); return; }
+    if (!model)       { showToast('Please enter a model / brand.', 'error'); return; }
+    if (!value || value <= 0) { showToast('Please enter a valid price.', 'error'); return; }
+
+    const btn = document.getElementById('add-equipment-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+        const res = await fetch('api/add_equipment.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ category_id: categoryId, type: typeId, name, model, value })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast(`"${name}" added successfully!`);
+            // Refresh equipment list from API
+            const eq = await fetch('api/get_equipment.php').then(r => r.json());
+            if (eq.success) state.equipment = eq.data;
+            // Rebuild any open dropdowns
+            document.getElementById('equipment-dropdowns').innerHTML = '';
+            state.selectedCategories.forEach(catId => {
+                const cat = state.categories.find(c => c.id == catId);
+                if (cat) renderEquipmentDropdown(cat);
+            });
+            document.getElementById('add-equipment-modal').classList.remove('show');
+            resetGearModal();
+        } else {
+            showToast(data.message || 'Failed to save gear.', 'error');
+        }
+    } catch (e) {
+        showToast('Network error. Please try again.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Save Gear';
+    }
 }
 
 function showToast(msg, type = 'success') {

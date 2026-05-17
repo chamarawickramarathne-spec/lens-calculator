@@ -57,9 +57,9 @@ if ($typeResult->num_rows === 0) {
     exit;
 }
 
-// Insert new equipment with is_active = 0 (inactive)
+// Insert new equipment with is_active = 1 (active immediately)
 $sql = "INSERT INTO equipment_details (category_id, type, model, name, value, description, is_active) 
-        VALUES (?, ?, ?, ?, ?, ?, 0)";
+        VALUES (?, ?, ?, ?, ?, ?, 1)";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('iissds', $categoryId, $typeId, $model, $name, $value, $description);

@@ -293,32 +293,72 @@
     </div>
 
     <div id="add-equipment-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="modal-title">Add New Gear</h2>
-            <div class="form-group">
-                <label class="form-label">Category</label>
-                <select id="new-equipment-category" class="form-select"></select>
+        <div class="modal-content gear-modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="gear-modal-title-wrap">
+                    <div class="gear-modal-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <h2 class="modal-title" id="modal-title">Add New Gear</h2>
+                </div>
+                <button id="close-gear-modal-x" class="modal-close" aria-label="Close">&times;</button>
             </div>
-            <div class="form-group">
-                <label class="form-label">Type</label>
-                <select id="new-equipment-type" class="form-select"></select>
+
+            <!-- Section 1: Category -->
+            <div class="gear-form-section">
+                <div class="gear-section-heading">
+                    <span class="gear-step-dot">1</span>
+                    <span>Select Category</span>
+                </div>
+                <div id="new-equipment-category" class="pill-radio-group"></div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Model</label>
-                <input type="text" id="new-equipment-model" class="form-input">
+
+            <!-- Section 2: Gear Type -->
+            <div class="gear-form-section">
+                <div class="gear-section-heading">
+                    <span class="gear-step-dot">2</span>
+                    <span>Select Type</span>
+                </div>
+                <div id="new-equipment-type" class="pill-radio-group"></div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Name</label>
-                <input type="text" id="new-equipment-name" class="form-input">
+
+            <!-- Section 3: Details + Actions inline -->
+            <div class="gear-form-section gear-form-section--last">
+                <div class="gear-section-heading">
+                    <span class="gear-step-dot">3</span>
+                    <span>Gear Details</span>
+                </div>
+                <div class="gear-details-grid">
+                    <div class="form-group">
+                        <label class="form-label">Name <span class="field-required">*</span></label>
+                        <input type="text" id="new-equipment-name" class="form-input" placeholder="e.g. Canon EF 50mm">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Model / Brand <span class="field-required">*</span></label>
+                        <input type="text" id="new-equipment-model" class="form-input" placeholder="e.g. Sony / Canon / Nikon / GODOX">
+                    </div>
+                </div>
+                <!-- Price + Buttons inline row -->
+                <div class="gear-price-action-row">
+                    <div class="gear-price-field">
+                        <label class="form-label">Rental Price (LKR) <span class="field-required">*</span></label>
+                        <div class="price-input-wrap">
+                            <span class="price-prefix">LKR</span>
+                            <input type="number" id="new-equipment-value" class="form-input price-input" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    <div class="gear-action-btns">
+                        <button id="add-equipment-btn" class="btn btn-primary">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            Save
+                        </button>
+                        <button id="close-modal-btn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Price (LKR)</label>
-                <input type="number" id="new-equipment-value" class="form-input">
-            </div>
-            <div class="step-actions">
-                <button id="add-equipment-btn" class="btn btn-primary">Save Gear</button>
-                <button id="close-modal-btn" class="btn btn-secondary">Cancel</button>
-            </div>
+
         </div>
     </div>
 
@@ -327,6 +367,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- Force fresh JS load -->
-    <script src="js/app.js?v=4.1"></script>
+    <script src="js/app.js?v=4.4"></script>
 </body>
 </html>

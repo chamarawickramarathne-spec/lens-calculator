@@ -541,3 +541,222 @@ body {
     .app-title { font-size: 0.85rem; }
     .app-subtitle { font-size: 0.55rem; }
 }
+
+/* =============================================
+   Gear Modal Redesign
+   ============================================= */
+
+/* Wider modal for gear form */
+.gear-modal-content {
+    max-width: 520px !important;
+    padding: 0 !important;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollable body area */
+.gear-modal-content .modal-header {
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+/* Title + icon row */
+.gear-modal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.gear-modal-icon {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--primary), var(--accent-orange));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+/* Scrollable form body */
+.gear-form-section {
+    padding: 1rem 1.4rem 0.25rem;
+}
+
+.gear-form-section + .gear-form-section {
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Numbered section heading */
+.gear-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.gear-step-dot {
+    width: 20px;
+    height: 20px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* Pill Radio Group */
+.pill-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+    min-height: 36px;
+}
+
+.pill-radio-group .pill-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 2px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.pill-radio-group input[type="radio"] {
+    display: none;
+}
+
+.pill-radio-group .pill-label:hover {
+    border-color: var(--primary-light);
+    background: #fef3c7;
+    color: var(--primary-dark);
+}
+
+.pill-radio-group input[type="radio"]:checked + .pill-label {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    font-weight: 700;
+}
+
+.pill-radio-group .pill-check-icon {
+    display: none;
+    width: 14px;
+    height: 14px;
+}
+
+.pill-radio-group input[type="radio"]:checked + .pill-label .pill-check-icon {
+    display: inline-block;
+}
+
+/* Gear Details Grid */
+.gear-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+}
+
+.gear-details-grid .form-group {
+    margin-bottom: 0.85rem;
+}
+
+.gear-details-grid .form-input {
+    height: 44px;
+    font-size: 0.9rem;
+}
+
+/* Price + Buttons inline row */
+.gear-form-section--last {
+    padding-bottom: 1.25rem;
+}
+
+.gear-price-action-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.65rem;
+    flex-wrap: nowrap;
+}
+
+.gear-price-field {
+    width: 155px;
+    flex-shrink: 0;
+}
+
+.gear-price-field .form-label {
+    margin-bottom: 0.4rem;
+}
+
+.gear-action-btns {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+    align-items: flex-end;
+    padding-bottom: 0;
+}
+
+.gear-action-btns .btn {
+    flex: 1;
+    height: 44px;
+    font-size: 0.85rem;
+    gap: 0.3rem;
+}
+
+/* Price input with LKR prefix */
+.price-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.price-prefix {
+    position: absolute;
+    left: 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.price-input {
+    padding-left: 2.75rem !important;
+    height: 44px !important;
+    font-size: 0.9rem;
+}
+
+/* Field labels helper text */
+.field-required {
+    color: #ef4444;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.field-optional {
+    color: #9ca3af;
+    font-size: 0.7rem;
+    font-weight: 400;
+    font-style: italic;
+}
