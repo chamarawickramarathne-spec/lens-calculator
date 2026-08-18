@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS equipment_types (
 CREATE TABLE IF NOT EXISTS equipment_details (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
-    type_id INT NOT NULL,
+    type INT NOT NULL,
     model VARCHAR(150) NOT NULL,
     name VARCHAR(200) NOT NULL,
     value DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS equipment_details (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES category_types(id) ON DELETE CASCADE,
-    FOREIGN KEY (type_id) REFERENCES equipment_types(id) ON DELETE CASCADE,
+    FOREIGN KEY (type) REFERENCES equipment_types(id) ON DELETE CASCADE,
     INDEX idx_category (category_id),
-    INDEX idx_type (type_id),
+    INDEX idx_type (type),
     INDEX idx_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -81,6 +81,12 @@ CREATE TABLE IF NOT EXISTS packages (
     margin_percentage DECIMAL(5, 2) DEFAULT 0.00,
     equipment_total DECIMAL(10, 2) DEFAULT 0.00,
     labor_total DECIMAL(10, 2) DEFAULT 0.00,
+    extra_gear_cost DECIMAL(10, 2) DEFAULT 0.00,
+    transportation_cost DECIMAL(10, 2) DEFAULT 0.00,
+    assistant_pay DECIMAL(10, 2) DEFAULT 0.00,
+    editing_cost DECIMAL(10, 2) DEFAULT 0.00,
+    additional_cost DECIMAL(10, 2) DEFAULT 0.00,
+    additional_costs_total DECIMAL(10, 2) DEFAULT 0.00,
     subtotal DECIMAL(10, 2) DEFAULT 0.00,
     margin_amount DECIMAL(10, 2) DEFAULT 0.00,
     final_total DECIMAL(10, 2) DEFAULT 0.00,

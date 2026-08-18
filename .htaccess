@@ -57,14 +57,19 @@
 # ErrorDocument 403 /lens-calculator/403.html
 # ErrorDocument 500 /lens-calculator/500.html
 
-# Protect sensitive files
+# Protect sensitive files (Apache 2.4 syntax)
 <FilesMatch "^(config\.php|\.htaccess|\.git)">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
 
 # Allow access to API files
-<FilesMatch "\.(php)$">
+<FilesMatch "^(add_equipment|generate_pdf|generate_package_pdf|get_categories|get_equipment|get_equipment_types|get_templates|log_access|save_package)\.php$">
     <IfModule mod_authz_core.c>
         Require all granted
     </IfModule>

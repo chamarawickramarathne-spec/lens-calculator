@@ -4,6 +4,37 @@ All notable changes to the Lens Calculator project will be documented in this fi
 
 ---
 
+## [1.1.0] - 2026-08-18
+
+### Bug Fixes & Security Hardening
+
+#### Security
+- ✅ Removed `cmd.exe` from web root directory
+- ✅ Fixed `.htaccess` to use Apache 2.4 `Require all denied` for config.php protection
+- ✅ Added `escapeHtml()` utility to prevent XSS in all innerHTML injections
+
+#### Bug Fixes
+- ✅ Fixed `schema.sql` column name `type_id` → `type` to match actual queries
+- ✅ Fixed `add_equipment.php` bind_param type: `$typeId` from `s` (string) to `i` (integer)
+- ✅ Fixed 6 undefined CSS variables in user guide styles
+- ✅ Removed ~400 lines dead code from `generate_pdf.php`
+- ✅ Consolidated duplicate Escape key handlers into one unified handler
+- ✅ Moved `temp_users.sql` to `database/` folder
+
+#### Features
+- ✅ Added `savePackage()` function and Save Package button in UI
+- ✅ Added additional cost columns to `packages` table schema
+- ✅ Created SQL migration for existing databases
+- ✅ `save_package.php` now stores all cost breakdowns
+
+#### Improvements
+- ✅ Standardized currency formatting with `formatCurrency()` helper
+- ✅ Removed duplicate Google Fonts import from CSS
+- ✅ Updated copyright year 2025 → 2026
+- ✅ `.htaccess` now whitelists only known API files instead of all `.php`
+
+---
+
 ## [1.0.0] - 2025-11-10
 
 ### Initial Release 🎉

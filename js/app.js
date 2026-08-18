@@ -3,6 +3,16 @@
  * Author: Antigravity
  */
 
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+function formatCurrency(val) {
+    return `${state.currency}${parseFloat(val).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
+
 const state = {
     categories: [],
     equipment: [],
@@ -76,7 +86,7 @@ function renderCategoryCheckboxes() {
         div.className = 'category-checkbox';
         div.innerHTML = `
             <input type="checkbox" value="${cat.id}" id="cat-${cat.id}">
-            <span>${cat.name}</span>
+            <span>${escapeHtml(cat.name)}</span>
         `;
         const cb = div.querySelector('input');
         cb.addEventListener('change', () => handleCategoryToggle(cat, cb.checked));
@@ -104,9 +114,9 @@ function renderEquipmentDropdown(cat) {
     div.className = 'form-group dropdown-group';
     div.id = `dropdown-group-${cat.id}`;
     div.innerHTML = `
-        <label class="form-label">${cat.name}</label>
+        <label class="form-label">${escapeHtml(cat.name)}</label>
         <select class="form-select equipment-select" id="select-${cat.id}">
-            <option value="">-- Choose ${cat.name} --</option>
+            <option value="">-- Choose ${escapeHtml(cat.name)} --</option>
         </select>
     `;
     mainContainer.appendChild(div);
@@ -116,7 +126,7 @@ function renderEquipmentDropdown(cat) {
     items.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.id;
-        opt.textContent = `${item.name} (${state.currency}${parseFloat(item.value).toFixed(0)})`;
+        opt.textContent = `${escapeHtml(item.name)} (${formatCurrency(parseFloat(item.value).toFixed(0))})`;
         opt.dataset.item = JSON.stringify(item);
         select.appendChild(opt);
     });
@@ -156,8 +166,8 @@ function renderSelectedItems() {
         div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background:#f9fafb; margin-bottom:0.5rem; border-radius:8px; font-size:0.875rem;';
         div.innerHTML = `
             <div>
-                <strong>${item.name}</strong><br>
-                <small>${item.quantity} x ${state.currency}${parseFloat(item.value).toLocaleString()}</small>
+                <strong>${escapeHtml(item.name)}</strong><br>
+                <small>${item.quantity} x ${formatCurrency(parseFloat(item.value).toLocaleString())}</small>
             </div>
             <button class="btn-remove" style="color:#ef4444; border:1px solid #fee2e2; background:white; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="removeGear(${item.id})">Remove</button>
         `;
@@ -189,9 +199,9 @@ function calculateTotals() {
     const finalTotal = subtotal + profit;
 
     const gearEl = document.getElementById('equipment-total');
-    if (gearEl) gearEl.textContent = `${state.currency}${gearTotal.toLocaleString()}`;
+    if (gearEl) gearEl.textContent = formatCurrency(gearTotal);
     
-    document.getElementById('sticky-total').textContent = `${state.currency}${finalTotal.toLocaleString()}`;
+    document.getElementById('sticky-total').textContent = formatCurrency(finalTotal);
 
     renderBreakdown(gearTotal, laborTotal, extraGear, transportation, assistantPay, editingCost, additionalCost, margin, profit, finalTotal);
 }
@@ -206,7 +216,7 @@ function renderBreakdown(gear, labor, extraGear, transportation, assistantPay, e
         value > 0 || label.includes('Cost') || label.includes('Service') ? `
         <div style="display:flex; justify-content:space-between; margin-bottom:0.65rem; ${style}">
             <span style="color:#555">${label}</span>
-            <span style="font-weight:600">${state.currency}${value.toLocaleString()}</span>
+            <span style="font-weight:600">${formatCurrency(value)}</span>
         </div>` : '';
 
     container.innerHTML = `
@@ -225,15 +235,15 @@ function renderBreakdown(gear, labor, extraGear, transportation, assistantPay, e
             ` : ''}
             <div style="display:flex; justify-content:space-between; margin-bottom:0.65rem; margin-top:0.75rem; border-top:1px dashed #ddd; padding-top:0.75rem;">
                 <span style="color:#555">Subtotal:</span>
-                <span style="font-weight:600">${state.currency}${(gear + labor + additionalTotal).toLocaleString()}</span>
+                <span style="font-weight:600">${formatCurrency(gear + labor + additionalTotal)}</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; color:#10b981; font-weight:600;">
                 <span>Business Margin (${marginPct}%):</span>
-                <span>${state.currency}${profit.toLocaleString()}</span>
+                <span>${formatCurrency(profit)}</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-top:1rem; padding-top:1rem; border-top:2px solid #ddd; font-weight:800; font-size:1.25rem;">
                 <span>Grand Total:</span>
-                <span style="color:var(--accent-orange)">${state.currency}${total.toLocaleString()}</span>
+                <span style="color:var(--accent-orange)">${formatCurrency(total)}</span>
             </div>
         </div>
     `;
@@ -289,14 +299,6 @@ function attachEventListeners() {
     document.getElementById('open-user-guide-btn')?.addEventListener('click', () => document.getElementById('user-guide-modal').classList.add('show'));
     document.getElementById('close-guide-modal-btn')?.addEventListener('click', closeUserGuideModal);
 
-    // Accessibility: close modal with Escape key
-    document.addEventListener('keydown', function (e) {
-        const modal = document.getElementById('user-guide-modal');
-        if (modal.classList.contains('show') && (e.key === 'Escape' || e.key === 'Esc')) {
-            closeUserGuideModal();
-        }
-    });
-
     // Accessibility: close modal when clicking outside content
     document.getElementById('user-guide-modal')?.addEventListener('mousedown', function(e) {
         if (e.target === this) closeUserGuideModal();
@@ -346,15 +348,21 @@ function attachEventListeners() {
     // Close on escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            const guideModal = document.getElementById('user-guide-modal');
+            const gearModal = document.getElementById('add-equipment-modal');
+            if (guideModal?.classList.contains('show')) {
+                closeUserGuideModal();
+            } else if (gearModal?.classList.contains('show')) {
+                closeGearModal();
+            }
             drawerOverlay?.classList.remove('show');
-            document.getElementById('user-guide-modal')?.classList.remove('show');
-            document.getElementById('add-equipment-modal')?.classList.remove('show');
         }
     });
 
     // Actions
     document.getElementById('download-pdf-btn')?.addEventListener('click', downloadPDF);
     document.getElementById('download-package-pdf-btn')?.addEventListener('click', downloadPackagePDF);
+    document.getElementById('save-package-btn')?.addEventListener('click', savePackage);
     document.getElementById('reset-btn')?.addEventListener('click', () => window.location.reload());
 }
 
@@ -582,4 +590,75 @@ function downloadPackagePDF() {
     window.open(`api/generate_package_pdf.php?${params.toString()}`, '_blank');
 }
 
+async function savePackage() {
+    const btn = document.getElementById('save-package-btn');
+    if (!btn) return;
 
+    const packageName = document.getElementById('package-name').value.trim();
+    if (!packageName) {
+        showToast('Please enter a project name before saving.', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    const gearTotal = state.selectedEquipment.reduce((sum, item) => sum + (parseFloat(item.value) * item.quantity), 0);
+    const hours = parseFloat(document.getElementById('labor-hours').value) || 0;
+    const rate = parseFloat(document.getElementById('hourly-rate').value) || 0;
+    const laborTotal = hours * rate;
+    const extraGear = parseFloat(document.getElementById('extra-gear-cost').value) || 0;
+    const transportation = parseFloat(document.getElementById('transportation-cost').value) || 0;
+    const assistantPay = parseFloat(document.getElementById('assistant-pay').value) || 0;
+    const editingCost = parseFloat(document.getElementById('editing-cost').value) || 0;
+    const additionalCost = parseFloat(document.getElementById('additional-cost').value) || 0;
+    const margin = parseFloat(document.getElementById('margin-percentage').value) || 0;
+    const additionalTotal = extraGear + transportation + assistantPay + editingCost + additionalCost;
+    const subtotal = gearTotal + laborTotal + additionalTotal;
+    const profit = subtotal * (margin / 100);
+    const finalTotal = subtotal + profit;
+
+    try {
+        const res = await fetch('api/save_package.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                package_name: packageName,
+                client_name: document.getElementById('client-name').value || '',
+                template_id: state.currentTemplate,
+                labor_hours: hours,
+                hourly_rate: rate,
+                margin_percentage: margin,
+                equipment_total: gearTotal,
+                labor_total: laborTotal,
+                extra_gear_cost: extraGear,
+                transportation_cost: transportation,
+                assistant_pay: assistantPay,
+                editing_cost: editingCost,
+                additional_cost: additionalCost,
+                additional_costs_total: additionalTotal,
+                subtotal: subtotal,
+                margin_amount: profit,
+                final_total: finalTotal,
+                notes: document.getElementById('package-notes').value || '',
+                equipment: state.selectedEquipment.map(e => ({
+                    equipment_id: e.id,
+                    quantity: e.quantity,
+                    unit_value: parseFloat(e.value),
+                    total_value: parseFloat(e.value) * e.quantity
+                }))
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Package saved successfully!');
+        } else {
+            showToast(data.error || 'Failed to save package.', 'error');
+        }
+    } catch (e) {
+        showToast('Network error. Please try again.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Package';
+    }
+}

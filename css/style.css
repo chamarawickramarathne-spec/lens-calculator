@@ -3,8 +3,6 @@
     Strict Isolation & Zero Overlap
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Inter:wght@400;500;600;700&display=swap');
-
 :root {
     --primary: #f59e0b;
     --primary-light: #fbbf24;
@@ -315,7 +313,7 @@ body {
 
 /* User Guide Styles */
 .user-guide-content {
-    color: var(--dark);
+    color: var(--text-main);
 }
 
 .user-guide-content > p {
@@ -324,29 +322,29 @@ body {
 }
 
 .guide-step {
-    background: var(--accent-lighter);
+    background: #fef3c7;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
     border-radius: 8px;
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--primary);
     transition: all 0.3s ease;
 }
 
 .guide-step:hover {
-    background: var(--accent-light);
+    background: #fde68a;
     transform: translateX(5px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .guide-step h3 {
-    color: var(--accent-red);
+    color: var(--accent);
     font-size: 0.8rem;
     margin-bottom: 0.75rem;
     font-weight: 600;
 }
 
 .guide-step p {
-    color: var(--dark-light);
+    color: var(--text-muted);
     line-height: 1.7;
     font-size: 0.8rem;
 }

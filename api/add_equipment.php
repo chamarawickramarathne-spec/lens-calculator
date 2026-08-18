@@ -62,7 +62,7 @@ $sql = "INSERT INTO equipment_details (category_id, type, model, name, value, de
         VALUES (?, ?, ?, ?, ?, ?, 1)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('iissds', $categoryId, $typeId, $model, $name, $value, $description);
+$stmt->bind_param('iiisds', $categoryId, $typeId, $model, $name, $value, $description);
 
 if ($stmt->execute()) {
     $equipmentId = $conn->insert_id;
